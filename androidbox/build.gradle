@@ -19,6 +19,6 @@ android {
 }
 
 dependencies {
-    compile project(':corebox')
+    compile project(':beebox:corebox')
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
