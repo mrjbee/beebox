@@ -4,7 +4,7 @@ package org.monroe.team.android.box.db;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import org.monroe.team.android.box.Closure;
+import org.monroe.team.corebox.utils.Closure;
 
 import java.util.ArrayList;
 import java.util.Date;

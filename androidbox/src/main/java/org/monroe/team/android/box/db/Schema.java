@@ -1,7 +1,7 @@
 package org.monroe.team.android.box.db;
 
-import org.monroe.team.android.box.Closure;
-import org.monroe.team.android.box.Lists;
+import org.monroe.team.corebox.utils.Closure;
+import org.monroe.team.corebox.utils.Lists;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -3,7 +3,7 @@ package org.monroe.team.android.box.utils;
 import android.content.res.Resources;
 import android.util.TypedValue;
 
-import org.monroe.team.android.box.Closure;
+import org.monroe.team.corebox.utils.Closure;
 
 final public class DisplayUtils {
 
