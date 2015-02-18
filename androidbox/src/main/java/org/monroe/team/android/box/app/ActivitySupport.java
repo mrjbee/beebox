@@ -4,8 +4,10 @@ import android.app.Application;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.Switch;
 
 import org.monroe.team.android.box.utils.DisplayUtils;
 
@@ -16,7 +18,7 @@ public abstract class ActivitySupport <AppType extends Application> extends andr
 
 
 
-    final public void requestNoAnimation(){noAnimation = true;}
+    final public void crunch_requestNoAnimation(){noAnimation = true;}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +43,14 @@ public abstract class ActivitySupport <AppType extends Application> extends andr
     public CheckBox view_check(int resourceId){
         return view(resourceId,CheckBox.class);
     }
+    public Switch view_switch(int resourceId){
+        return view(resourceId,Switch.class);
+    }
     public ListView view_list(int resourceId){
         return view(resourceId,ListView.class);
+    }
+    public Button view_button(int resourceId){
+        return view(resourceId, Button.class);
     }
 
 
