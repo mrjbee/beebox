@@ -34,6 +34,10 @@ public class GenericListViewAdapter<TData, TViewHolder extends GenericListViewAd
         return convertView;
     }
 
+    @Override
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        return getView(position,convertView,parent);
+    }
 
     public static interface ViewHolderFactory<TViewHolder extends ViewHolder<?>>{
         TViewHolder create(View convertView);

@@ -1,6 +1,7 @@
 package org.monroe.team.android.box.app;
 
 import android.app.Application;
+import android.widget.Toast;
 
 public abstract class ApplicationSupport <Model> extends Application{
 
@@ -23,4 +24,9 @@ public abstract class ApplicationSupport <Model> extends Application{
     }
 
     abstract protected Model createModel();
+
+    final public void debug_exception(Throwable e) {
+        String msg = e.getClass().getSimpleName()+":"+e.getMessage();
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+    }
 }

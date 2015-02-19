@@ -56,6 +56,14 @@ public abstract class Model {
                             callback.onDone();
                         }
                     });
+                } else if(e instanceof RuntimeException) {
+                    getResponseHandler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onFails(e);
+                            callback.onDone();
+                        }
+                    });
                 } else {
                     getResponseHandler().post(new Runnable() {
                         @Override
