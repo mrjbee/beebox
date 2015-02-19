@@ -8,9 +8,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import org.monroe.team.android.box.utils.DisplayUtils;
-
 
 public abstract class ActivitySupport <AppType extends Application> extends android.app.Activity{
 
@@ -38,6 +38,10 @@ public abstract class ActivitySupport <AppType extends Application> extends andr
 
     public View view(int resourceId){
         return findViewById(resourceId);
+    }
+
+    public TextView view_text(int resourceId){
+        return view(resourceId,TextView.class);
     }
 
     public CheckBox view_check(int resourceId){

@@ -10,7 +10,10 @@ public abstract class ApplicationSupport <Model> extends Application{
     public void onCreate() {
         super.onCreate();
         model();
+        onPostCreate();
     }
+
+    protected void onPostCreate() {}
 
     final public Model model() {
         if (model == null){
