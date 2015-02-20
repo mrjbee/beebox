@@ -42,4 +42,12 @@ public class Lists {
         return false;
     }
 
+    public static <ElemType> ElemType find(Collection<ElemType> collection, Closure<ElemType, Boolean> comapre) {
+        for (ElemType elem:collection){
+            if (comapre.execute(elem)){
+                return elem;
+            }
+        }
+        return null;
+    }
 }
