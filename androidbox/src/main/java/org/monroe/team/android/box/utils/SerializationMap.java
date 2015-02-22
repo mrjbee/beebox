@@ -102,4 +102,10 @@ public class SerializationMap <Key extends Serializable,Value extends Serializab
         }
     }
 
+    public Value remove(Key key) {
+        checkRestoringDone();
+        Value value = map.remove(key);
+        persistAll();
+        return value;
+    }
 }
