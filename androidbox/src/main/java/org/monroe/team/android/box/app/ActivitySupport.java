@@ -2,7 +2,6 @@ package org.monroe.team.android.box.app;
 
 import android.app.Application;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -15,8 +14,7 @@ import org.monroe.team.android.box.utils.DisplayUtils;
 public abstract class ActivitySupport <AppType extends Application> extends android.app.Activity{
 
     private boolean noAnimation = false;
-
-
+    private Lifecycle lifecycleState = Lifecycle.Created;
 
     final public void crunch_requestNoAnimation(){noAnimation = true;}
 
@@ -24,12 +22,50 @@ public abstract class ActivitySupport <AppType extends Application> extends andr
     protected void onCreate(Bundle savedInstanceState) {
         if (noAnimation) overridePendingTransition(0, 0);
         super.onCreate(savedInstanceState);
+        updateState(Lifecycle.Created);
+    }
+
+    private void updateState(Lifecycle state) {
+        lifecycleState = state;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateState(Lifecycle.Started);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateState(Lifecycle.Resumed);
     }
 
     @Override
     protected void onPause() {
         if (noAnimation) overridePendingTransition(0, 0);
         super.onPause();
+        updateState(Lifecycle.Paused);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        updateState(Lifecycle.Stopped);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        updateState(Lifecycle.Destroyed);
+    }
+
+    final public Lifecycle getLifecycleState() {
+        return lifecycleState;
+    }
+
+    final public boolean before(Lifecycle state) {
+        return  (lifecycleState.ordinal() < state.ordinal());
     }
 
     public <ViewType extends View> ViewType view(int resourceId, Class<ViewType> viewType){
@@ -98,4 +134,7 @@ public abstract class ActivitySupport <AppType extends Application> extends andr
         return (obj == null) ? defValue: (ResultType) obj;
     }
 
+    public enum Lifecycle {
+        Created, Started, Resumed, Paused, Stopped, Destroyed
+    }
 }

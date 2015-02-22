@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -68,11 +69,20 @@ public class SerializationMap <Key extends Serializable,Value extends Serializab
             ObjectInputStream is = new ObjectInputStream(fis);
             Object readObject = is.readObject();
 
-            if(readObject != null) {
-                map = (Map<Key,Value>) readObject;
+            if (readObject != null) {
+                map = (Map<Key, Value>) readObject;
             } else {
                 throw new RuntimeException("Empty object read");
             }
+        } catch (InvalidClassException ice){
+           if (fis != null){
+                try {
+                    fis.close();
+                } catch (IOException e) {}
+           }
+           if (!file.delete()) {
+               restoreAll();
+           }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
