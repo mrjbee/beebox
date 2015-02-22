@@ -7,6 +7,10 @@ import java.util.Date;
 
 public class DateUtils {
 
+    public static String msAsString(){
+        return Long.toString(System.currentTimeMillis());
+    }
+
     public static Date now(){
         return new Date();
     }
