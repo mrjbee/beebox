@@ -35,6 +35,9 @@ public class Lists {
         return list.get(list.size() - 1);
     }
 
+    public static <ElemType> ElemType getLast(ElemType... list) {
+        return list[list.length-1];
+    }
     public static <Type1,Type2>  boolean in(Collection<Type1> collection, Type2 item, Closure<P<Type1,Type2>,Boolean> compare) {
         for (Type1 type1 : collection) {
             if (compare.execute(new P<Type1, Type2>(type1,item))) return true;

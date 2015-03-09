@@ -9,6 +9,9 @@ final public class DisplayUtils {
 
     private DisplayUtils() {}
 
+    public static float spToPx(float sp, Resources resources){
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, resources.getDisplayMetrics());
+    }
     public static float dpToPx(float dp, Resources resources){
        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
     }

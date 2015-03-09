@@ -1,5 +1,7 @@
 package org.monroe.team.android.box.app.ui.animation.apperrance;
 
+import org.monroe.team.corebox.utils.Lists;
+
 final public class CombinedAppearanceController implements AppearanceController{
 
     private AppearanceController[] controllers;
@@ -28,16 +30,12 @@ final public class CombinedAppearanceController implements AppearanceController{
 
     @Override
     public void showAndCustomize(AnimatorCustomization customization) {
-        for (AppearanceController controller : controllers) {
-            controller.showAndCustomize(customization);
-        }
+        Lists.getLast(controllers).showAndCustomize(customization);
     }
 
     @Override
     public void hideAndCustomize(AnimatorCustomization customization) {
-        for (AppearanceController controller : controllers) {
-            controller.hideAndCustomize(customization);
-        }
+        Lists.getLast(controllers).hideAndCustomize(customization);
     }
 
     @Override

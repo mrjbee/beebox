@@ -1,11 +1,14 @@
 package org.monroe.team.android.box.app.ui.animation.apperrance;
 
 import android.animation.TimeInterpolator;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.widget.TextView;
 
 import org.monroe.team.android.box.app.ui.animation.ViewAnimatorFactory;
 import org.monroe.team.android.box.app.ui.animation.ViewAnimatorFactorySupport;
@@ -81,6 +84,29 @@ public final class AppearanceControllerBuilder<TypeValue> {
             @Override
             public long duration(Float fromValue, Float toValue) {
                 long ms = (long) Math.abs(fromValue - toValue);
+                ms = msLimitsCheck(ms);
+                return ms;
+            }
+        };
+    }
+
+
+    public static ViewAnimatorFactorySupport.DurationProvider<Integer> duration_auto_int() {
+        return new ViewAnimatorFactorySupport.DurationProvider<Integer>() {
+            @Override
+            public long duration(Integer fromValue, Integer toValue) {
+                long ms = (long) Math.abs(fromValue - toValue);
+                ms = msLimitsCheck(ms);
+                return ms;
+            }
+        };
+    }
+
+    public static ViewAnimatorFactorySupport.DurationProvider<Float> duration_auto_fint(final float kof){
+        return new ViewAnimatorFactorySupport.DurationProvider<Float>() {
+            @Override
+            public long duration(Float fromValue, Float toValue) {
+                long ms = (long) Math.abs((fromValue - toValue) * kof);
                 ms = msLimitsCheck(ms);
                 return ms;
             }
@@ -272,6 +298,42 @@ public final class AppearanceControllerBuilder<TypeValue> {
             }
         };
     }
+
+    public static TypeBuilder<Float> textScale(final float showValue, final float hideValue){
+        return new TypeBuilder<Float>() {
+            @Override
+            public DefaultAppearanceController.ValueGetter<Float> buildValueGetter() {
+                return new DefaultAppearanceController.ValueGetter<Float>() {
+                    @Override
+                    public Float getShowValue() {
+                        return showValue;
+                    }
+
+                    @Override
+                    public Float getHideValue() {
+                        return hideValue;
+                    }
+
+                    @Override
+                    public Float getCurrentValue(View view) {
+                        return ((TextView)view).getTextSize();
+                    }
+                };
+            }
+
+
+            @Override
+            public TypedValueSetter<Float> buildValueSetter() {
+                return new TypedValueSetter<Float>(Float.class) {
+                    @Override
+                    public void setValue(View view, Float value) {
+                         ((TextView) view).setTextSize(TypedValue.COMPLEX_UNIT_PX,value);
+                    }
+                };
+            }
+        };
+    }
+
     public static TypeBuilder<Float> ySlide(final float showValue, final float hideValue){
         return new TypeBuilder<Float>() {
             @Override
@@ -293,6 +355,7 @@ public final class AppearanceControllerBuilder<TypeValue> {
                     }
                 };
             }
+
 
             @Override
             public TypedValueSetter<Float> buildValueSetter() {
@@ -435,7 +498,7 @@ public final class AppearanceControllerBuilder<TypeValue> {
         TimeInterpolator build();
     }
 
-    private static interface TypeBuilder<ValueType>{
+    public static interface TypeBuilder<ValueType>{
         public DefaultAppearanceController.ValueGetter<ValueType> buildValueGetter();
         public TypedValueSetter<ValueType> buildValueSetter();
     }
