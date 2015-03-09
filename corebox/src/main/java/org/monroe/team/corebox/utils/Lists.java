@@ -17,7 +17,7 @@ public class Lists {
         List<ToData> answerList = new ArrayList<ToData>(collection.size());
         for (FromData origin : collection) {
            ToData transformed = closure.execute(origin);
-           if (transformed != null) answerList.add(transformed);
+           if (transformed != null) answerList.add(answerList.size(),transformed);
         }
         return answerList;
     }
