@@ -53,4 +53,8 @@ public class Lists {
         }
         return null;
     }
+
+    public static int getLastIndex(List<?> list) {
+        return list.size()-1;
+    }
 }
