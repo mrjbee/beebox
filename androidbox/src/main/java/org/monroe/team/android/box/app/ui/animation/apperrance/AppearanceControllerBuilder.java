@@ -102,6 +102,17 @@ public final class AppearanceControllerBuilder<TypeValue> {
         };
     }
 
+    public static ViewAnimatorFactorySupport.DurationProvider<Integer> duration_auto_int(final float kof) {
+        return new ViewAnimatorFactorySupport.DurationProvider<Integer>() {
+            @Override
+            public long duration(Integer fromValue, Integer toValue) {
+                long ms = (long) Math.abs((fromValue - toValue) * kof);
+                ms = msLimitsCheck(ms);
+                return ms;
+            }
+        };
+    }
+
     public static ViewAnimatorFactorySupport.DurationProvider<Float> duration_auto_fint(final float kof){
         return new ViewAnimatorFactorySupport.DurationProvider<Float>() {
             @Override
