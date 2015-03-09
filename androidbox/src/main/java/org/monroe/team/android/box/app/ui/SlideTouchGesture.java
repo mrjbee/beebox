@@ -26,13 +26,13 @@ public abstract class SlideTouchGesture implements View.OnTouchListener{
 
             case MotionEvent.ACTION_MOVE:
                 float slideValue = calculateSlideValue(event);
-                float fraction = slideValue / slideLimit;
+                float fraction = Math.abs(slideValue / slideLimit);
                 notifyGestureProgress(event, slideValue, fraction);
             return true;
 
             case MotionEvent.ACTION_UP:
                 slideValue = calculateSlideValue(event);
-                fraction = slideValue / slideLimit;
+                fraction = Math.abs(slideValue / slideLimit);
                 notifyGestureProgress(event, slideValue, fraction);
                 notifyGestureEnd(event, slideValue, fraction);
             return true;
@@ -56,13 +56,15 @@ public abstract class SlideTouchGesture implements View.OnTouchListener{
     }
 
     private float calculateSlideValue(MotionEvent event) {
-
-        float answer = (slideStartValue - getCurrentValue(event))*slideAxis.getDirectionSign();
-
-        if (answer < 0){
-            answer = 0;
-        } else if (answer > slideLimit){
-            answer = slideLimit;
+        float answer = (slideStartValue - getCurrentValue(event));
+        if (slideAxis.getDirectionSign() != 0) {
+            answer = answer * slideAxis.getDirectionSign();
+            if (answer < 0) {
+                answer = 0;
+            }
+        }
+        if (Math.abs(answer) > slideLimit) {
+            answer = (answer > 0)? slideLimit : -slideLimit;
         }
         return answer;
     }
@@ -94,7 +96,7 @@ public abstract class SlideTouchGesture implements View.OnTouchListener{
 
     public static enum Axis{
 
-        X_RIGHT(false, 1), Y_DOWN(true, -1), X_LEFT(false, -1), Y_UP(true, 1);
+        X (false,0), X_RIGHT(false, -1), Y_DOWN(true, -1), X_LEFT(false, 1), Y_UP(true, 1);
 
         private final boolean vertical;
         private final float sign;
