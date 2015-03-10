@@ -1,8 +1,11 @@
 package org.monroe.team.android.box.app;
 
+import android.annotation.TargetApi;
 import android.app.Application;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
@@ -134,7 +137,42 @@ public abstract class ActivitySupport <AppType extends Application> extends andr
         return (obj == null) ? defValue: (ResultType) obj;
     }
 
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        final View view = getWindow().getDecorView().findViewById(android.R.id.content);
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                onLayout(view);
+                if (Build.VERSION_CODES.JELLY_BEAN > Build.VERSION.SDK_INT){
+                    removeListenerOld(view,this);
+                }else {
+                    removeListener(view, this);
+                }
+            }
+        });
+    }
+
+    private void removeListenerOld(View view, ViewTreeObserver.OnGlobalLayoutListener toRemove) {
+        view.getViewTreeObserver().removeGlobalOnLayoutListener(toRemove);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void removeListener(View view, ViewTreeObserver.OnGlobalLayoutListener toRemove) {
+        view.getViewTreeObserver().removeOnGlobalLayoutListener(toRemove);
+    }
+
+    private void onLayout(View view) {
+        onActivitySize(view.getMeasuredWidth(), view.getMeasuredHeight());
+    }
+
+    protected void onActivitySize(int width, int height) {
+    }
+
     public enum Lifecycle {
         Created, Started, Resumed, Paused, Stopped, Destroyed
     }
+
+
 }

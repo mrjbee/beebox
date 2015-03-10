@@ -1,7 +1,11 @@
 package org.monroe.team.android.box.utils;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.util.TypedValue;
+import android.view.Display;
+import android.view.WindowManager;
 
 import org.monroe.team.corebox.utils.Closure;
 
