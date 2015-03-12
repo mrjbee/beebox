@@ -17,7 +17,7 @@ public class Lists {
         List<ToData> answerList = new ArrayList<ToData>(collection.size());
         for (FromData origin : collection) {
            ToData transformed = closure.execute(origin);
-           if (transformed != null) answerList.add(answerList.size(),transformed);
+           if (transformed != null) answerList.add(answerList.size(), transformed);
         }
         return answerList;
     }
@@ -56,5 +56,9 @@ public class Lists {
 
     public static int getLastIndex(List<?> list) {
         return list.size()-1;
+    }
+
+    public static int getLastIndex(Object... array) {
+        return array.length -1;
     }
 }
