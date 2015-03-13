@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.monroe.team.android.box.utils.DisplayUtils;
 
@@ -168,6 +169,13 @@ public abstract class ActivitySupport <AppType extends Application> extends andr
     }
 
     protected void onActivitySize(int width, int height) {
+    }
+
+    public void forceCloseWithErrorCode(int errorCode) {
+        Toast.makeText(getApplicationContext(),
+                "Unexpected error ("+errorCode+"). Please contact application support.",
+                Toast.LENGTH_LONG).show();
+        finish();
     }
 
     public enum Lifecycle {

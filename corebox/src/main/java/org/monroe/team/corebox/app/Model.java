@@ -21,7 +21,7 @@ public abstract class Model {
         this.serviceRegistry.registrate(BackgroundTaskManager.class,backgroundTaskManager);
     }
 
-    protected abstract UCResponseHandler getResponseHandler();
+    public abstract UCResponseHandler getResponseHandler();
 
     public <RequestType,ResponseType> BackgroundTaskManager.BackgroundTask<ResponseType> execute(
             Class<? extends UserCase<RequestType,ResponseType>> ucId,

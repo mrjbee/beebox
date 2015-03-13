@@ -5,12 +5,21 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 
+import org.monroe.team.android.box.event.Event;
 import org.monroe.team.android.box.services.AndroidServiceRegistry;
 import org.monroe.team.android.box.services.EventMessenger;
 import org.monroe.team.android.box.services.SettingManager;
 import org.monroe.team.corebox.app.Model;
 import org.monroe.team.corebox.services.ServiceRegistry;
 import org.monroe.team.corebox.services.BackgroundTaskManager;
+import org.monroe.team.corebox.utils.Closure;
+import org.monroe.team.corebox.utils.Lists;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 public abstract class AndroidModel extends Model {
 
@@ -44,9 +53,7 @@ public abstract class AndroidModel extends Model {
 
 
     @Override
-    final protected UCResponseHandler getResponseHandler() {
+    final public UCResponseHandler getResponseHandler() {
         return uiThreadResponseHandler;
     }
-
-
 }

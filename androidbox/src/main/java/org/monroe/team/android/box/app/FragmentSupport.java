@@ -25,6 +25,10 @@ public abstract class FragmentSupport <AppType extends Application> extends Frag
         return fragment_panel;
     }
 
+    final public ActivitySupport<AppType> activity(){
+        return (ActivitySupport<AppType>) getActivity();
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
