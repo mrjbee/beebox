@@ -49,7 +49,7 @@ public abstract class DataProvider<DataType extends Serializable> {
 
     final public DataType fetch() throws FetchException{
         SynchronousFetchAdapter<DataType> synchronousFetchAdapter = new SynchronousFetchAdapter<DataType>();
-        fetch(false, synchronousFetchAdapter);
+        fetch(true, synchronousFetchAdapter);
         return synchronousFetchAdapter.get();
     }
 
@@ -134,12 +134,13 @@ public abstract class DataProvider<DataType extends Serializable> {
         model.getResponseHandler().post(new Runnable() {
             @Override
             public void run() {
-                updateOnError(observers,times, e);
+                updateOnError(observers, times, e);
             }
         });
     }
 
     protected void updateOnError(List<FetchObserver<DataType>> observers, int times, Exception e) {
+        //TODO: Do something with exception here
         Lists.iterateAndRemove(observers, new Closure<Iterator<FetchObserver<DataType>>, Boolean>() {
             @Override
             public Boolean execute(Iterator<FetchObserver<DataType>> arg) {
@@ -175,32 +176,34 @@ public abstract class DataProvider<DataType extends Serializable> {
 
         private DataType result;
         private FetchError error;
-        private Object monitor = new Object();
 
         @Override
         public synchronized void onFetch(DataType data) {
             result = data;
+            this.notify();
         }
 
         @Override
         public synchronized void onError(FetchError fetchError) {
             error = fetchError;
+            this.notify();
         }
 
-        public synchronized DataType get() throws FetchException{
-            if (result != null){
-                return result;
-            }
-            if (error != null){
-                throw new FetchException(error);
-            }
-            synchronized (monitor){
+        public DataType get() throws FetchException{
+            synchronized (this){
+                if (result != null){
+                    return result;
+                }
+                if (error != null){
+                    throw new FetchException(error);
+                }
                 try {
-                    monitor.wait();
+                    this.wait();
                 } catch (InterruptedException e) {
                     throw new FetchException(INTERRUPTED);
                 }
             }
+
             if (result != null){
                 return result;
             }else {
