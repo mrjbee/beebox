@@ -1,8 +1,10 @@
 package org.monroe.team.android.box.db;
 
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Pair;
 
 import org.monroe.team.corebox.utils.Closure;
 
@@ -24,7 +26,7 @@ public class DAOSupport {
         return schema.table(tableClass);
     }
 
-    final protected static String[] strs(Object... vals) {
+    protected static String[] strs(Object... vals) {
         String[] strings = new String[vals.length];
         for (int i = 0; i < vals.length; i++) {
             strings[i]=String.valueOf(vals[i]);
@@ -56,6 +58,39 @@ public class DAOSupport {
         }
     }
 
+
+    protected static Result result() {
+        return new Result();
+    }
+
+    protected static ContentBuilder content(){
+        return new ContentBuilder();
+    }
+
+    protected static class ContentBuilder{
+
+        private final ContentValues contentValues = new ContentValues();
+
+        public <DataType> ContentBuilder value(Schema.VersionTable.ColumnID<DataType> columnID, DataType data){
+            if (columnID.dataClass() == Integer.class){
+                contentValues.put(columnID.name(), (Integer) data);
+            }else if (columnID.dataClass() == String.class){
+                contentValues.put(columnID.name(), (String) data);
+            }else if (columnID.dataClass() == Long.class){
+                contentValues.put(columnID.name(), (Long) data);
+            }else if (columnID.dataClass() == Boolean.class){
+                contentValues.put(columnID.name(), (Boolean) data);
+            }else if (columnID.dataClass() == Float.class){
+                contentValues.put(columnID.name(), (Float) data);
+            }
+            return this;
+        }
+
+        public ContentValues get(){
+            return contentValues;
+        }
+    }
+
     public static class Result {
 
         private List<Object> fetchedFiledList = new ArrayList<Object>(4);
@@ -63,6 +98,8 @@ public class DAOSupport {
         static Result answer(){
             return new Result();
         }
+
+
 
         public Result with(Object ... withValues) {
             for (Object withValue : withValues) {
@@ -85,6 +122,7 @@ public class DAOSupport {
             return (Type) fetchedFiledList.get(index);
         }
     }
+
 
 
 }

@@ -44,6 +44,10 @@ public abstract class Schema {
         return (Table) tableList.get(tableClass);
     }
 
+    static protected <ClassType>  VersionTable.ColumnID<ClassType> column(String name, Class<ClassType> javaClass) {
+        return new VersionTable.ColumnID<ClassType>(name,javaClass);
+    }
+
     public static interface Table {
         public String createScript();
         void alterColumns(int version, Closure<String, Void> sqlAction);
@@ -70,7 +74,7 @@ public abstract class Schema {
 
             StringBuilder builder = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (");
             for (VersionTableColumn tableColumn : tableColumns) {
-                builder.append(tableColumn.fieldName +" "+tableColumn.fieldDefinition+" ,");
+                builder.append(tableColumn.columnID.name() +" "+tableColumn.fieldDefinition+" ,");
             }
             builder.deleteCharAt(builder.length()-1);
             builder.append(")");
@@ -84,7 +88,7 @@ public abstract class Schema {
                 public Void execute(VersionTableColumn tableColumn) {
                     if (tableColumn.version == version){
                         sqlAction.execute("ALTER TABLE "+tableName+" ADD COLUMN "
-                                +tableColumn.fieldName+" "+tableColumn.fieldDefinition);
+                                +tableColumn.columnID.name()+" "+tableColumn.fieldDefinition);
                     }
                     return null;
                 }
@@ -94,17 +98,37 @@ public abstract class Schema {
         protected final class VersionTableColumn {
 
             private final int version;
-            private final String fieldName;
+            private final ColumnID columnID;
             private final String fieldDefinition;
 
-            public VersionTableColumn(int version, String fieldName, String fieldDefinition) {
+            public VersionTableColumn(int version, ColumnID columnID, String fieldDefinition) {
                 this.version = version;
-                this.fieldName = fieldName;
+                this.columnID = columnID;
                 this.fieldDefinition = fieldDefinition;
             }
         }
 
+        public final static class ColumnID<Type> {
+
+            private final String name;
+            private final Class<Type> javaClass;
+
+            public ColumnID(String name, Class<Type> javaClass) {
+                this.name = name;
+                this.javaClass = javaClass;
+            }
+
+            public String name() {
+                return name;
+            }
+
+            public Class<Type> dataClass() {
+                return javaClass;
+            }
+        }
+
         protected final class TableBuilder {
+
             private final int version;
             private final List<VersionTableColumn> columnLists;
 
@@ -113,8 +137,8 @@ public abstract class Schema {
                 this.columnLists = columnLists;
             }
 
-            final public TableBuilder column(String name, String definition){
-                tableColumns.add(new VersionTableColumn(version, name, definition));
+            final public TableBuilder column(ColumnID columnID, String definition){
+                tableColumns.add(new VersionTableColumn(version, columnID, definition));
                 return this;
             }
         }
