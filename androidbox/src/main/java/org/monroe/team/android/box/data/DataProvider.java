@@ -4,6 +4,7 @@ import android.content.Context;
 
 import org.monroe.team.android.box.event.Event;
 import org.monroe.team.android.box.event.GenericEvent;
+import org.monroe.team.corebox.log.L;
 import org.monroe.team.corebox.services.BackgroundTaskManager;
 import org.monroe.team.corebox.utils.Closure;
 import org.monroe.team.corebox.utils.Lists;
@@ -94,17 +95,14 @@ public abstract class DataProvider<DataType extends Serializable> {
         if (dataChangeEvent != null){
             dataChangeEvent.send(context, data);
         }
+        final List<FetchObserver<DataType>> copy = copyAndClear();
+
         model.getResponseHandler().post(new Runnable() {
             @Override
             public void run() {
-                Lists.iterateAndRemove(awaitingObservers, new Closure<Iterator<FetchObserver<DataType>>, Boolean>() {
-                    @Override
-                    public Boolean execute(Iterator<FetchObserver<DataType>> arg) {
-                        arg.next().onFetch(data);
-                        arg.remove();
-                        return true;
-                    }
-                });
+                for (FetchObserver<DataType> dataTypeFetchObserver : copy) {
+                    dataTypeFetchObserver.onFetch(data);
+                }
             }
         });
     }
@@ -131,24 +129,28 @@ public abstract class DataProvider<DataType extends Serializable> {
 
     private synchronized void updateError(long runId, final List<FetchObserver<DataType>> observers, final int times, final Exception e){
         if (runId != lastFetchTaskRunId) return;
+        dataState = STATE.INVALID;
+        fetchDataTask = null;
+        L.w("DataProvider","Error on fetch = "+dataClass.getName(), e);
+        final List<FetchObserver<DataType>> observersCopy = copyAndClear();
         model.getResponseHandler().post(new Runnable() {
             @Override
             public void run() {
-                updateOnError(observers, times, e);
+                updateOnError(observersCopy, times, e);
             }
         });
     }
 
+    private List<FetchObserver<DataType>> copyAndClear() {
+        final List<FetchObserver<DataType>> observersCopy = new ArrayList<>(this.awaitingObservers);
+        awaitingObservers.clear();
+        return observersCopy;
+    }
+
     protected void updateOnError(List<FetchObserver<DataType>> observers, int times, Exception e) {
-        //TODO: Do something with exception here
-        Lists.iterateAndRemove(observers, new Closure<Iterator<FetchObserver<DataType>>, Boolean>() {
-            @Override
-            public Boolean execute(Iterator<FetchObserver<DataType>> arg) {
-                arg.next().onError(FetchError.FAILED);
-                arg.remove();
-                return true;
-            }
-        });
+        for (FetchObserver<DataType> observer : observers) {
+            observer.onError(new ExceptionFetchError(e));
+        }
     }
 
 
@@ -157,8 +159,15 @@ public abstract class DataProvider<DataType extends Serializable> {
         public void onError(FetchError fetchError);
     }
 
-    public static class FetchError {
-        public static FetchError FAILED = new FetchError();
+    public static interface FetchError {}
+
+    public static class ExceptionFetchError implements FetchError {
+
+        public final Throwable cause;
+
+        public ExceptionFetchError(Throwable cause) {
+            this.cause = cause;
+        }
     }
 
     public static class FetchException extends Exception{
@@ -172,7 +181,7 @@ public abstract class DataProvider<DataType extends Serializable> {
 
     private class SynchronousFetchAdapter<DataType> implements FetchObserver<DataType> {
 
-        FetchError INTERRUPTED = new FetchError();
+        FetchError INTERRUPTED = new FetchError(){};
 
         private DataType result;
         private FetchError error;
