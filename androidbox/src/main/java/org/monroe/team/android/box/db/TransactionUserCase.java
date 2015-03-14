@@ -10,7 +10,7 @@ public abstract class TransactionUserCase<RequestType,ResponseType, Dao extends 
     }
 
     @Override
-    final public ResponseType execute(final RequestType request) {
+    final protected ResponseType executeImpl(final RequestType request) {
         return using(TransactionManager.class).execute(new TransactionManager.TransactionAction<ResponseType>() {
             @Override
             public ResponseType execute(DAOSupport dao) {

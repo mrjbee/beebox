@@ -1,8 +1,6 @@
-package org.monroe.team.android.box.utils;
+package org.monroe.team.corebox.utils;
 
-import android.util.Log;
-
-import org.monroe.team.corebox.utils.DateUtils;
+import org.monroe.team.corebox.log.L;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,9 +21,17 @@ public class ETD {
     public static StopWatch measure(String name){
         StopWatch stopWatch = new StopWatch(name, System.currentTimeMillis());
         if(stopWatchMap.put(name,stopWatch)!=null){
-            Log.w("EDT","Previous measure still run. Id = "+name);
+            L.w("EDT", "Previous measure still run. Id = " + name);
         }
         return stopWatch;
+    }
+
+    public static NonBlockingStopWatch nonBlockingMeasure(String name){
+        return nonBlockingMeasure(name, -1);
+    }
+
+    public static NonBlockingStopWatch nonBlockingMeasure(String name, long warnAfterMs){
+        return new NonBlockingStopWatch(name, System.currentTimeMillis(), warnAfterMs);
     }
 
     public synchronized static long stopMeasure(String name,  String... results) {
@@ -35,7 +41,7 @@ public class ETD {
     public synchronized static long stopMeasure(String name, LogCondition condition, String... results) {
         StopWatch watch = stopWatchMap.remove(name);
         if (watch == null){
-            Log.w("EDT","There is no running with id = "+name);
+            L.w("EDT","There is no running with id = "+name);
             return -1;
         }
 
@@ -45,10 +51,10 @@ public class ETD {
         String resultString = buildResultString(results);
         if (condition.log(delta,results)) {
             String time = timeToString(delta);
-            Log.i("ETD", "Name = " + name + " time=" + time+ " result=" + resultString);
+            L.i("ETD", "Name = " + name + " time=" + time+ " result=" + resultString);
             long startMs = watch.startMs;
             for (Stage stage: watch.stageList){
-               Log.i("ETD", "  -- stage = "+stage.name+" time="+ timeToString(stage.time - startMs)+ " result=" + buildResultString(stage.results));
+               L.i("ETD", "  -- stage = "+stage.name+" time="+ timeToString(stage.time - startMs)+ " result=" + buildResultString(stage.results));
                startMs = stage.time;
             }
         }
@@ -126,5 +132,63 @@ public class ETD {
                 return DateUtils.asSeconds(ms) >= seconds;
             }
         };
+    }
+
+    public static class NonBlockingStopWatch {
+
+        private final String name;
+        private final long startMs;
+        private final long warnMs;
+        private final Thread thread;
+
+        private long lastWarnMs;
+        private boolean alive = true;
+
+        public NonBlockingStopWatch(String name, long startMs, long warnMs) {
+            this.name = name;
+            this.startMs = startMs;
+            this.warnMs = warnMs;
+            lastWarnMs = startMs;
+            thread = new Thread(){
+                @Override
+                public void run() {
+                    while (alive || isInterrupted()){
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                        checkWarnMeasure();
+                    }
+                    doStop();
+                }
+            };
+            thread.start();
+        }
+
+        private synchronized void checkWarnMeasure() {
+            if (warnMs < 1){
+                return;
+            }
+
+            long curTime = System.currentTimeMillis();
+            long delta = curTime - lastWarnMs;
+            if (delta > warnMs){
+                //do warn here
+                lastWarnMs = curTime;
+                L.w("ETD", "Name = " + name + " actual = "+timeToString(delta)+" expected = "+timeToString(warnMs));
+            }
+        }
+
+        private synchronized void doStop() {
+            checkWarnMeasure();
+            long delta = System.currentTimeMillis() - startMs;
+            L.i("ETD", "Name = " + name + " execution time = "+timeToString(delta));
+        }
+
+        public synchronized void stop(){
+            alive = false;
+            thread.interrupt();
+        }
     }
 }

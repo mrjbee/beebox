@@ -197,6 +197,7 @@ public abstract class DataProvider<DataType extends Serializable> {
                 if (error != null){
                     throw new FetchException(error);
                 }
+
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
