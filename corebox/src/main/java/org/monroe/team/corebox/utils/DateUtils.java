@@ -68,10 +68,14 @@ public class DateUtils {
         long minutes = rest / (60*1000);
         rest = rest % (60*1000);
         long seconds = rest / 1000;
-        return new long[]{days,hours,minutes,seconds};
+        rest = rest % (1000);
+        return new long[]{days,hours,minutes,seconds,rest};
     }
 
 
+    public static long asHours(long ms) {
+        return ms/(60*60*1000);
+    }
     public static long asMinutes(long ms) {
         return ms/(60*1000);
     }
