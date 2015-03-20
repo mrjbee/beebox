@@ -88,4 +88,7 @@ public class DateUtils {
         else return Math.round(count);
     }
 
+    public static Date today() {
+        return dateOnly(now());
+    }
 }
