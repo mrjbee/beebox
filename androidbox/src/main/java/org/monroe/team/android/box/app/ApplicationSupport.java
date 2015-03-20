@@ -1,25 +1,15 @@
 package org.monroe.team.android.box.app;
 
 import android.app.Application;
-import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.monroe.team.android.box.event.Event;
-import org.monroe.team.android.box.event.GenericEvent;
-import org.monroe.team.corebox.services.BackgroundTaskManager;
-import org.monroe.team.corebox.utils.Closure;
-import org.monroe.team.corebox.utils.Lists;
+import org.monroe.team.android.box.services.SettingManager;
+import org.monroe.team.corebox.app.Model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.Callable;
+public abstract class ApplicationSupport <ModelType extends Model> extends Application{
 
-public abstract class ApplicationSupport <Model> extends Application{
-
-    private Model model;
+    private ModelType model;
 
     @Override
     public void onCreate() {
@@ -30,14 +20,14 @@ public abstract class ApplicationSupport <Model> extends Application{
 
     protected void onPostCreate() {}
 
-    final public Model model() {
+    final public ModelType model() {
         if (model == null){
             model = createModel();
         }
         return model;
     }
 
-    abstract protected Model createModel();
+    abstract protected ModelType createModel();
 
     final public void debug_exception(Throwable e) {
         String msg = e.getClass().getSimpleName()+":"+e.getMessage();
@@ -46,4 +36,21 @@ public abstract class ApplicationSupport <Model> extends Application{
     }
 
 
+    public String getSettingAsString(SettingManager.SettingItem<?> item) {
+        Object itemValue = model().usingService(SettingManager.class).get(item);
+        if (itemValue == null){
+            return "";
+        }else {
+            return itemValue.toString();
+        }
+    }
+
+
+    public <SettingType> SettingType getSetting(SettingManager.SettingItem<SettingType> setting){
+        return model().usingService(SettingManager.class).get(setting);
+    }
+
+    public <SettingType> void setSetting(SettingManager.SettingItem<SettingType> settingItem, SettingType settingValue) {
+        model().usingService(SettingManager.class).set(settingItem, settingValue);
+    }
 }
