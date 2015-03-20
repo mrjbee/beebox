@@ -82,6 +82,8 @@ public class DateUtils {
     public static long asSeconds(long ms) {
         return ms/1000;
     }
-
+    public static long asDays(long ms) {
+        return ms / (24*60*60*1000);
+    }
 
 }
