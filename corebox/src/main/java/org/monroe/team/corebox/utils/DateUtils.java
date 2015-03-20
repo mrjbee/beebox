@@ -82,8 +82,10 @@ public class DateUtils {
     public static long asSeconds(long ms) {
         return ms/1000;
     }
-    public static long asDays(long ms) {
-        return ms / (24*60*60*1000);
+    public static long asDays(long ms, boolean fullDays) {
+        double count = ((double)ms) / (24d*60d*60d*1000d);
+        if (fullDays) return (long) count;
+        else return Math.round(count);
     }
 
 }

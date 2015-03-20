@@ -45,6 +45,14 @@ public abstract class DataProvider<DataType extends Serializable> {
         this.dataClass = dataClass;
     }
 
+    public DataType getData() {
+        return data;
+    }
+
+    public boolean isValid() {
+        return dataState == STATE.VALID;
+    }
+
     protected abstract DataType provideData();
 
 
