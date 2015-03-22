@@ -91,4 +91,8 @@ public class DateUtils {
     public static Date today() {
         return dateOnly(now());
     }
+
+    public static boolean isToday(Date probeDate) {
+        return 0 == today().compareTo(dateOnly(probeDate));
+    }
 }
