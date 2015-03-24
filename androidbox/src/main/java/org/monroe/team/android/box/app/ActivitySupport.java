@@ -19,11 +19,13 @@ public abstract class ActivitySupport <AppType extends Application> extends andr
 
     private boolean noAnimation = false;
     private Lifecycle lifecycleState = Lifecycle.Created;
+    private boolean firstRun;
 
     final public void crunch_requestNoAnimation(){noAnimation = true;}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        firstRun = isFirstRun(savedInstanceState);
         if (noAnimation) overridePendingTransition(0, 0);
         super.onCreate(savedInstanceState);
         updateState(Lifecycle.Created);
@@ -120,6 +122,10 @@ public abstract class ActivitySupport <AppType extends Application> extends andr
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("not_first_run", true);
+    }
+
+    final public boolean isFirstRun() {
+        return firstRun;
     }
 
     final public boolean isFirstRun(Bundle state){
