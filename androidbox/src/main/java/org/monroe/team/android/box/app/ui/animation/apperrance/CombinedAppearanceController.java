@@ -30,11 +30,17 @@ final public class CombinedAppearanceController implements AppearanceController{
 
     @Override
     public void showAndCustomize(AnimatorCustomization customization) {
+        for (int i=0; i<controllers.length-1;i++){
+            controllers[i].show();
+        }
         Lists.getLast(controllers).showAndCustomize(customization);
     }
 
     @Override
     public void hideAndCustomize(AnimatorCustomization customization) {
+        for (int i=0; i<controllers.length-1;i++){
+            controllers[i].hide();
+        }
         Lists.getLast(controllers).hideAndCustomize(customization);
     }
 
