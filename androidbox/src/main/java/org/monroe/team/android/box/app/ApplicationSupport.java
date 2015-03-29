@@ -7,6 +7,8 @@ import android.widget.Toast;
 import org.monroe.team.android.box.services.SettingManager;
 import org.monroe.team.corebox.app.Model;
 
+import java.io.InputStream;
+
 public abstract class ApplicationSupport <ModelType extends Model> extends Application{
 
     private ModelType model;

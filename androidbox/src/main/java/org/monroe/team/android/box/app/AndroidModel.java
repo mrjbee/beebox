@@ -56,4 +56,8 @@ public abstract class AndroidModel extends Model {
     final public UCResponseHandler getResponseHandler() {
         return uiThreadResponseHandler;
     }
+
+    final public void ui(Runnable runnable){
+       uiThreadResponseHandler.post(runnable);
+    }
 }

@@ -115,5 +115,4 @@ public abstract class Model {
    public static interface UCResponseHandler {
        public void post(Runnable r);
    }
-
 }
