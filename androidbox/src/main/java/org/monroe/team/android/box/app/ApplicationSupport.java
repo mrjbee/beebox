@@ -6,8 +6,9 @@ import android.widget.Toast;
 
 import org.monroe.team.android.box.services.SettingManager;
 import org.monroe.team.corebox.app.Model;
-
-import java.io.InputStream;
+import org.monroe.team.corebox.services.BackgroundTaskManager;
+import org.monroe.team.corebox.uc.UserCase;
+import org.monroe.team.corebox.uc.UserCaseSupport;
 
 public abstract class ApplicationSupport <ModelType extends Model> extends Application{
 
@@ -55,4 +56,38 @@ public abstract class ApplicationSupport <ModelType extends Model> extends Appli
     public <SettingType> void setSetting(SettingManager.SettingItem<SettingType> settingItem, SettingType settingValue) {
         model().usingService(SettingManager.class).set(settingItem, settingValue);
     }
+
+    public <RequestType,ResponseType, ValueType> BackgroundTaskManager.BackgroundTask<ResponseType> fetchValue(
+            Class<? extends UserCase<RequestType,ResponseType>> ucId,
+            final RequestType request, final ValueAdapter<ResponseType, ValueType> adapter, final ValueObserver<ValueType> observer) {
+        return model().execute(ucId,request,new Model.BackgroundResultCallback<ResponseType>() {
+            @Override
+            public void onResult(ResponseType response) {
+                observer.onSuccess(adapter.adapt(response));
+            }
+
+            @Override
+            public void onFails(Throwable e) {
+                if (e instanceof UserCaseSupport.FailExecutionException){
+                    observer.onFail(((UserCaseSupport.FailExecutionException) e).errorCode);
+                }else {
+                    exceptionHandler(e);
+                }
+            }
+        });
+    }
+
+    protected void exceptionHandler(Throwable e) {
+        debug_exception(e);
+    }
+
+    public static interface ValueAdapter<ValueType1,ValueType2>{
+        public ValueType2 adapt(ValueType1 value);
+    }
+
+    public static interface ValueObserver<ValueType>{
+        public void onSuccess(ValueType value);
+        public void onFail(int errorCode);
+    }
+
 }

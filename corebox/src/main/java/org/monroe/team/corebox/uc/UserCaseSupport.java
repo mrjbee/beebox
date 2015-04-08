@@ -2,6 +2,8 @@ package org.monroe.team.corebox.uc;
 import org.monroe.team.corebox.services.ServiceRegistry;
 import org.monroe.team.corebox.utils.ETD;
 
+import java.util.concurrent.ExecutionException;
+
 public abstract class UserCaseSupport<RequestType,ResponseType> implements UserCase <RequestType,ResponseType> {
 
     private final ServiceRegistry serviceRegistry;
@@ -28,4 +30,28 @@ public abstract class UserCaseSupport<RequestType,ResponseType> implements UserC
     }
 
     protected abstract ResponseType executeImpl(RequestType request);
+
+    public static class FailExecutionException extends RuntimeException{
+
+        public final int errorCode;
+
+        public FailExecutionException(int errorCode) {
+            this.errorCode = errorCode;
+        }
+
+        public FailExecutionException(String message, int errorCode) {
+            super(message);
+            this.errorCode = errorCode;
+        }
+
+        public FailExecutionException(String message, Throwable cause, int errorCode) {
+            super(message, cause);
+            this.errorCode = errorCode;
+        }
+
+        public FailExecutionException(Throwable cause, int errorCode) {
+            super(cause);
+            this.errorCode = errorCode;
+        }
+    }
 }

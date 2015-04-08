@@ -8,6 +8,7 @@ import android.os.Looper;
 import org.monroe.team.android.box.event.Event;
 import org.monroe.team.android.box.services.AndroidServiceRegistry;
 import org.monroe.team.android.box.services.EventMessenger;
+import org.monroe.team.android.box.services.HttpManager;
 import org.monroe.team.android.box.services.SettingManager;
 import org.monroe.team.corebox.app.Model;
 import org.monroe.team.corebox.services.ServiceRegistry;
@@ -42,6 +43,7 @@ public abstract class AndroidModel extends Model {
         EventMessenger messenger = new EventMessenger(context);
         serviceRegistry.registrate(SettingManager.class, settingManager);
         serviceRegistry.registrate(EventMessenger.class, messenger);
+        serviceRegistry.registrate(HttpManager.class, new HttpManager());
         constructor(appName, context, serviceRegistry);
     }
 
