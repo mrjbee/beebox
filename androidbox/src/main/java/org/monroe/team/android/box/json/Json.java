@@ -79,6 +79,15 @@ public abstract class Json<KeyType>{
         return answer;
     }
 
+    public static Json createFromObject(Object jsonObject) {
+        if (jsonObject instanceof JSONObject){
+            return new JsonObject((JSONObject) jsonObject);
+        }else if (jsonObject instanceof JSONArray){
+            return new JsonArray((JSONArray) jsonObject);
+        }
+        throw new IllegalArgumentException("Should be a JSONArray or JSONObject, but got "+jsonObject.getClass().getName());
+    }
+
     public static class JsonArray extends Json<Integer>{
 
         private final JSONArray nativeObject;
