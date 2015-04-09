@@ -88,6 +88,8 @@ public abstract class Json<KeyType>{
         throw new IllegalArgumentException("Should be a JSONArray or JSONObject, but got "+jsonObject.getClass().getName());
     }
 
+    public abstract String toJsonString();
+
     public static class JsonArray extends Json<Integer>{
 
         private final JSONArray nativeObject;
@@ -114,6 +116,11 @@ public abstract class Json<KeyType>{
         @Override
         protected Object get(Integer key) {
             return nativeObject.opt(key);
+        }
+
+        @Override
+        public String toJsonString() {
+            return nativeObject.toString();
         }
 
         public int size(){
@@ -147,6 +154,11 @@ public abstract class Json<KeyType>{
         @Override
         protected Object get(String key) {
             return object.opt(key);
+        }
+
+        @Override
+        public String toJsonString() {
+            return object.toString();
         }
 
         public Iterator<String> keys(){

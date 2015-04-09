@@ -15,29 +15,29 @@ public abstract class JsonBuilder {
         return Json.createFromObject(builder.buildJson());
     }
 
-    protected abstract Object buildJson();
+    protected abstract java.lang.Object buildJson();
 
-    public static ObjectBuilder object() {
-        return new ObjectBuilder();
+    public static Object object() {
+        return new Object();
     }
 
-    public static ArrayBuilder array() {
-        return new ArrayBuilder();
+    public static Array array() {
+        return new Array();
     }
 
-    public static class ArrayBuilder extends JsonBuilder {
+    public static class Array extends JsonBuilder {
 
-        private List<Object> valuesList = new ArrayList<>();
+        private List<java.lang.Object> valuesList = new ArrayList<>();
 
-        public ArrayBuilder add(Object value) {
+        public Array add(java.lang.Object value) {
             valuesList.add(value);
             return this;
         }
 
         @Override
-        protected Object buildJson() {
+        protected java.lang.Object buildJson() {
             JSONArray array = new JSONArray();
-            for (Object value : valuesList) {
+            for (java.lang.Object value : valuesList) {
                 if (value instanceof JsonBuilder){
                     JsonBuilder builder = (JsonBuilder) value;
                     value = builder.buildJson();
@@ -48,20 +48,20 @@ public abstract class JsonBuilder {
         }
     }
 
-    public static class ObjectBuilder extends JsonBuilder{
+    public static class Object extends JsonBuilder{
 
-        private final Map<String,Object> fieldsMap = new HashMap<>();
+        private final Map<String, java.lang.Object> fieldsMap = new HashMap<>();
 
-        public ObjectBuilder field(String fieldName, Object fieldValue) {
+        public Object field(String fieldName, java.lang.Object fieldValue) {
             fieldsMap.put(fieldName, fieldValue);
             return this;
         }
 
         @Override
-        protected Object buildJson() {
+        protected java.lang.Object buildJson() {
             JSONObject object = new JSONObject();
-            for (Map.Entry<String,Object> entry:fieldsMap.entrySet()){
-                Object value = entry.getValue();
+            for (Map.Entry<String, java.lang.Object> entry:fieldsMap.entrySet()){
+                java.lang.Object value = entry.getValue();
                 if (value instanceof JsonBuilder){
                     value = ((JsonBuilder)value).buildJson();
                 }
