@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class HttpManager {
 
-    public <BodyType> Response<BodyType> get(String url, ConnectionDetails details, ResponseBuilder<BodyType> builder) throws BadUrlException, NoRouteToHostException, InvalidBodyFormat, IOException {
+    public <BodyType> Response<BodyType> get(String url, ConnectionDetails details, ResponseBuilder<BodyType> builder) throws BadUrlException, NoRouteToHostException, InvalidBodyFormatException, IOException {
         URL requestUrl = createURL(url);
         HttpURLConnection connection = prepareConnection(details, requestUrl);
         try {
@@ -61,7 +61,7 @@ public class HttpManager {
     public static ResponseWithHeadersBuilder<Json> json() {
         return new ResponseWithHeadersBuilder<Json>() {
             @Override
-            protected Json readBody(HttpURLConnection connection) throws IOException, InvalidBodyFormat {
+            protected Json readBody(HttpURLConnection connection) throws IOException, InvalidBodyFormatException {
                 BufferedReader br = null;
                 try {
                     br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -73,7 +73,7 @@ public class HttpManager {
                     try {
                         return Json.createFromString(sb.toString());
                     } catch (JSONException e) {
-                        throw new InvalidBodyFormat(e);
+                        throw new InvalidBodyFormatException(e);
                     }
                 }finally {
                     if (br != null){
@@ -102,7 +102,7 @@ public class HttpManager {
     }
 
     public static interface ResponseBuilder<BodyType> {
-        <BodyType> Response<BodyType> build(HttpURLConnection connection) throws IOException, InvalidBodyFormat;
+        <BodyType> Response<BodyType> build(HttpURLConnection connection) throws IOException, InvalidBodyFormatException;
     }
 
     public static abstract class ResponseWithHeadersBuilder<BodyType> implements ResponseBuilder<BodyType> {
@@ -110,7 +110,7 @@ public class HttpManager {
         private List<String> requestedHeaders = new ArrayList<String>(1);
 
         @Override
-        public Response<BodyType> build(HttpURLConnection connection) throws IOException, InvalidBodyFormat {
+        public Response<BodyType> build(HttpURLConnection connection) throws IOException, InvalidBodyFormatException {
             int statusCode = connection.getResponseCode();
             String statusMessage = connection.getResponseMessage();
             Map<String,String> headers = new HashMap<>();
@@ -122,7 +122,7 @@ public class HttpManager {
             return new Response<>(body,statusCode,statusMessage,headers);
         }
 
-        protected abstract BodyType readBody(HttpURLConnection connection) throws IOException, InvalidBodyFormat;
+        protected abstract BodyType readBody(HttpURLConnection connection) throws IOException, InvalidBodyFormatException;
 
         public ResponseWithHeadersBuilder<BodyType> requestHeader(String headerName){
             requestedHeaders.add(headerName);
@@ -151,20 +151,20 @@ public class HttpManager {
         }
     }
 
-    public static class BadUrlException extends Exception {
+    public static class BadUrlException extends RuntimeException {
         public BadUrlException(Throwable throwable) {
             super(throwable);
         }
     }
 
-    public static class NoRouteToHostException extends Exception{
+    public static class NoRouteToHostException extends IOException{
         public NoRouteToHostException(Throwable throwable) {
             super(throwable);
         }
     }
 
-    public static class InvalidBodyFormat extends Exception{
-        public InvalidBodyFormat(Throwable throwable) {
+    public static class InvalidBodyFormatException extends Exception{
+        public InvalidBodyFormatException(Throwable throwable) {
             super(throwable);
         }
     }

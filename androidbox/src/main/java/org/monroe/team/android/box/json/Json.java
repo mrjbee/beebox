@@ -53,6 +53,12 @@ public abstract class Json<KeyType>{
         return (ValueType) get(key);
     }
 
+    final public <ValueType> ValueType value(KeyType key, ValueType defaultValue){
+        ValueType answer = (ValueType) get(key);
+        if (answer == null) answer = defaultValue;
+        return answer;
+    }
+
     public static Json createFromString(String jsonString) throws JSONException {
         jsonString = jsonString.trim();
         if (jsonString.isEmpty()) return null;
