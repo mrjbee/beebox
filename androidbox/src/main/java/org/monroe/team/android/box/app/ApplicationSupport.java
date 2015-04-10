@@ -85,6 +85,14 @@ public abstract class ApplicationSupport <ModelType extends Model> extends Appli
         public ValueType2 adapt(ValueType1 value);
     }
 
+    public static class NoOpValueAdapter<ValueType> implements ValueAdapter<ValueType,ValueType> {
+
+        @Override
+        public ValueType adapt(ValueType value) {
+            return value;
+        }
+    }
+
     public static interface ValueObserver<ValueType>{
         public void onSuccess(ValueType value);
         public void onFail(int errorCode);
