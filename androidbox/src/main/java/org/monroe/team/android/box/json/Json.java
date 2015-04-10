@@ -50,13 +50,30 @@ public abstract class Json<KeyType>{
     }
 
     final public <ValueType> ValueType value(KeyType key, Class<ValueType> valueClass){
-        return (ValueType) get(key);
+        Object value = get(key);
+        return numbersWorkaround(valueClass, value);
+    }
+
+    private <ValueType> ValueType numbersWorkaround(Class<ValueType> valueClass, Object value) {
+        if (valueClass == Float.class){
+            if (value instanceof  Integer){
+                value = (float) ((Integer) value).intValue();
+            }
+            if (value instanceof  Double){
+                value = (float) ((Double) value).doubleValue();
+            }
+        }else if (valueClass == Double.class){
+            if (value instanceof  Integer){
+                value = (double) ((Integer) value).intValue();
+            }
+        }
+        return (ValueType) value;
     }
 
     final public <ValueType> ValueType value(KeyType key, ValueType defaultValue){
         ValueType answer = (ValueType) get(key);
         if (answer == null) answer = defaultValue;
-        return answer;
+        return (ValueType) numbersWorkaround(defaultValue.getClass(), answer);
     }
 
     public static Json createFromString(String jsonString) throws JSONException {
