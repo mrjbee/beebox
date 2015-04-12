@@ -28,7 +28,7 @@ public abstract class PushToActionAdapter implements PushTouchDelegate.PushListe
         }
 
         float realValue = overPushValue/pushToActionValue;
-        float answer = (float)(Math.cos((realValue + 1) * Math.PI) / 2.0f) + 0.5f;
+        float answer = realValue;//(float)(Math.cos((realValue + 1) * Math.PI) / 2.0f) + 0.5f;
 
         return answer;
     }
