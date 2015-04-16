@@ -165,7 +165,7 @@ public abstract class Json<KeyType>{
 
         @Override
         public boolean exists(String key) {
-            return object.opt(key) != null;
+            return !object.isNull(key);
         }
 
         @Override
