@@ -6,7 +6,7 @@ import java.util.Map;
 
 public abstract class DataManger {
 
-    private final Map<Class,DataProvider> dataProviderMap;
+    private final Map<Class,Data> dataProviderMap;
 
     public DataManger() {
         this.dataProviderMap = new HashMap<>();
@@ -15,19 +15,19 @@ public abstract class DataManger {
 
     protected abstract void construct();
 
-    final protected  <Data extends Serializable> void put(Class<Data> dataClass, DataProvider<Data> dataProvider){
+    final protected  <DataType extends Serializable> void put(Class<DataType> dataClass, DataProvider<DataType> dataProvider){
         dataProviderMap.put(dataClass, dataProvider);
     }
 
-    final public <Data extends Serializable> Data fetch(Class<Data> dataClass) throws DataProvider.FetchException {
-        return (Data) dataProviderMap.get(dataClass).fetch();
+    final public <DataType extends Serializable> DataType fetch(Class<DataType> dataClass) throws DataProvider.FetchException {
+        return (DataType) dataProviderMap.get(dataClass).fetch();
     }
 
-    final public <Data extends Serializable> void invalidate(Class<Data> dataClass){
+    final public <DataType extends Serializable> void invalidate(Class<DataType> dataClass){
         getDataProvider(dataClass).invalidate();
     }
 
-    private <Data extends Serializable> DataProvider getDataProvider(Class<Data> dataClass) {
+    private <DataType extends Serializable> Data<DataType> getDataProvider(Class<DataType> dataClass) {
         if (dataProviderMap.get(dataClass) == null)throw new NullPointerException("No data provider for "+dataClass.getName());
         return dataProviderMap.get(dataClass);
     }
