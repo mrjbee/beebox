@@ -302,7 +302,7 @@ public class HttpManager {
 
     public static class ConnectionDetails{
 
-        private int timeout = 1000;
+        private int timeout = 5000;
         private int readTimeout = 50000;
         private boolean disconnect = false;
 
