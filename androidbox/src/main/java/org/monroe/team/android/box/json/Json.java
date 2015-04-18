@@ -132,6 +132,7 @@ public abstract class Json<KeyType>{
 
         @Override
         protected Object get(Integer key) {
+            if (nativeObject.isNull(key)) return null;
             return nativeObject.opt(key);
         }
 
@@ -170,6 +171,7 @@ public abstract class Json<KeyType>{
 
         @Override
         protected Object get(String key) {
+            if (object.isNull(key)) return null;
             return object.opt(key);
         }
 
