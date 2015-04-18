@@ -41,12 +41,16 @@ public abstract class SlideTouchGesture implements View.OnTouchListener{
     }
 
     private void notifyGestureEnd(MotionEvent event, float slideValue, float fraction) {
-        if (fraction > 0.4f){
+        if (fraction > applyFraction()){
             onApply(event.getX(), event.getY(), slideValue, fraction);
         } else {
             onCancel(event.getX(), event.getY(), slideValue, fraction);
         }
         onEnd(event.getX(), event.getY(), slideValue, fraction);
+    }
+
+    protected float applyFraction() {
+        return 0.4f;
     }
 
     protected void onEnd(float x, float y, float slideValue, float fraction) {}
