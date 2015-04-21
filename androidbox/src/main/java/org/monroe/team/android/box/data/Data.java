@@ -4,6 +4,8 @@ import android.content.Context;
 
 import org.monroe.team.corebox.log.L;
 import org.monroe.team.corebox.services.BackgroundTaskManager;
+import org.monroe.team.corebox.utils.Closure;
+import org.monroe.team.corebox.utils.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,19 +26,29 @@ public abstract class Data<DataType> {
     private DataType data;
     private STATE dataState = STATE.INVALID;
     private List<FetchObserver<DataType>> awaitingObservers = new ArrayList<>();
-    private DataChangeObserver<DataType> dataChangeObserver;
+    private List<DataChangeObserver<DataType>> dataChangeObserverList = new ArrayList<>();
 
     public Data(Class<DataType> dataClass, org.monroe.team.corebox.app.Model model) {
         this.model = model;
         this.dataClass = dataClass;
     }
 
+    @Deprecated
     public DataChangeObserver<DataType> getDataChangeObserver() {
-        return dataChangeObserver;
+        return dataChangeObserverList.get(0);
     }
 
+    public boolean removeDataChangeObserver(DataChangeObserver<DataType> observer) {
+        return dataChangeObserverList.remove(observer);
+    }
+
+    public void addDataChangeObserver(DataChangeObserver<DataType> observer) {
+        dataChangeObserverList.add(observer);
+    }
+
+    @Deprecated
     public void setDataChangeObserver(DataChangeObserver<DataType> dataChangeObserver) {
-        this.dataChangeObserver = dataChangeObserver;
+        addDataChangeObserver(dataChangeObserver);
     }
 
     public DataType getData() {
@@ -79,9 +91,13 @@ public abstract class Data<DataType> {
             fetchDataTask.cancel();
             doFetch();
         } else {
-            if (dataChangeObserver != null){
-                dataChangeObserver.onDataInvalid();
-            }
+            Lists.each(dataChangeObserverList, new Closure<DataChangeObserver<DataType>, Void>() {
+                @Override
+                public Void execute(DataChangeObserver<DataType> arg) {
+                    arg.onDataInvalid();
+                    return null;
+                }
+            });
         }
     }
 
@@ -97,9 +113,13 @@ public abstract class Data<DataType> {
 
         this.data = data;
         dataState = STATE.VALID;
-        if (dataChangeObserver != null){
-            dataChangeObserver.onData(data);
-        }
+        Lists.each(dataChangeObserverList, new Closure<DataChangeObserver<DataType>, Void>() {
+            @Override
+            public Void execute(DataChangeObserver<DataType> arg) {
+                arg.onData(data);
+                return null;
+            }
+        });
         final List<FetchObserver<DataType>> copy = copyAndClear();
 
         model.getResponseHandler().post(new Runnable() {
