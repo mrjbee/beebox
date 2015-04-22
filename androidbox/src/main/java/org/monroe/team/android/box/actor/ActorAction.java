@@ -45,6 +45,9 @@ public class ActorAction implements Serializable {
         return name.equals(intent.getStringExtra("NAME"));
     }
 
+    public PendingIntent checkPendingIntent(Context context) {
+        return checkPendingIntent(context, Collections.EMPTY_LIST);
+    }
 
     public PendingIntent checkPendingIntent(Context context,  List<Pair<String, ? extends Serializable>> parameterList) {
         Intent intent = createIntent(context, parameterList);
