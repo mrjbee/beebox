@@ -46,4 +46,8 @@ public class ActorAction implements Serializable {
     }
 
 
+    public PendingIntent checkPendingIntent(Context context,  List<Pair<String, ? extends Serializable>> parameterList) {
+        Intent intent = createIntent(context, parameterList);
+        return PendingIntent.getBroadcast(context, pendingId, intent, PendingIntent.FLAG_NO_CREATE);
+    }
 }
