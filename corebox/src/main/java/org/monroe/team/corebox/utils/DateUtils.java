@@ -65,8 +65,8 @@ public class DateUtils {
         rest = rest % (24*60*60*1000);
         long hours = rest / (60*60*1000);
         rest = rest % (60*60*1000);
-        long minutes = rest / (60*1000);
-        rest = rest % (60*1000);
+        long minutes = rest / (msSeconds(60));
+        rest = rest % (msSeconds(60));
         long seconds = rest / 1000;
         rest = rest % (1000);
         return new long[]{days,hours,minutes,seconds,rest};
@@ -77,7 +77,7 @@ public class DateUtils {
         return ms/(60*60*1000);
     }
     public static long asMinutes(long ms) {
-        return ms/(60*1000);
+        return ms/(msSeconds(60));
     }
     public static long asSeconds(long ms) {
         return ms/1000;
@@ -94,5 +94,17 @@ public class DateUtils {
 
     public static boolean isToday(Date probeDate) {
         return 0 == today().compareTo(dateOnly(probeDate));
+    }
+
+    public static long msHour(long hourCount) {
+        return hourCount * msMinutes(60);
+    }
+
+    public static long msMinutes(long minutesCount) {
+        return minutesCount * msSeconds(60);
+    }
+
+    public static long msSeconds(long secondsCount) {
+        return secondsCount * 1000;
     }
 }
