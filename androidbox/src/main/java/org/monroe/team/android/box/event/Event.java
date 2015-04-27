@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 
 import org.monroe.team.corebox.utils.Closure;
 import java.util.ArrayList;
@@ -41,15 +42,16 @@ public abstract class Event<DataType>{
                 onEvent.execute(event.extractValue(intent));
             }
         };
-
-        context.registerReceiver(receiver,new IntentFilter(event.getAction()));
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
+        localBroadcastManager.registerReceiver(receiver,new IntentFilter(event.getAction()));
         register(owner, receiver);
     }
 
     public static <DataT> void unSubscribeFromEvents(Context context, Object owner){
         if (registerMap.get(owner) != null){
+            LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
             for (BroadcastReceiver receiver : registerMap.get(owner)) {
-                context.unregisterReceiver(receiver);
+                localBroadcastManager.unregisterReceiver(receiver);
             }
             registerMap.get(owner).clear();
         }
@@ -66,7 +68,8 @@ public abstract class Event<DataType>{
     public void send(Context context, DataType data){
         Intent intent = new Intent(getAction());
         putValue(intent, data);
-        context.sendBroadcast(intent);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
+        localBroadcastManager.sendBroadcast(intent);
     }
 
     protected abstract DataType extractValue(Intent intent);
