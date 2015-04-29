@@ -188,7 +188,22 @@ public abstract class Data<DataType> {
         public void onError(FetchError fetchError);
     }
 
-    public static interface FetchError {}
+    public static interface FetchError {
+        public String message();
+    }
+
+    public static class DefaultFetchError implements FetchError {
+        public final String msg;
+
+        public DefaultFetchError(String msg) {
+            this.msg = msg;
+        }
+
+        public String message(){
+            return msg;
+        }
+    }
+
 
     public static class ExceptionFetchError implements FetchError {
 
@@ -197,6 +212,11 @@ public abstract class Data<DataType> {
         public ExceptionFetchError(Throwable cause) {
             this.cause = cause;
         }
+
+        @Override
+        public String message() {
+            return cause.getMessage();
+        }
     }
 
     public static class FetchException extends Exception{
@@ -204,13 +224,19 @@ public abstract class Data<DataType> {
         public final FetchError error;
 
         public FetchException(FetchError error) {
+            super(error.message());
+            this.error = error;
+        }
+
+        public FetchException(ExceptionFetchError error) {
+            super(error.cause);
             this.error = error;
         }
     }
 
     private class SynchronousFetchAdapter<DataType> implements FetchObserver<DataType> {
 
-        FetchError INTERRUPTED = new FetchError(){};
+        FetchError INTERRUPTED = new DefaultFetchError("Fetching interrupted");
 
         private DataType result;
         private FetchError error;
