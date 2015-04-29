@@ -1,5 +1,6 @@
 package org.monroe.team.android.box.app;
 
+import android.app.Activity;
 import android.app.Application;
 import android.util.Log;
 import android.widget.Toast;
@@ -32,7 +33,7 @@ public abstract class ApplicationSupport <ModelType extends Model> extends Appli
 
     abstract protected ModelType createModel();
 
-    final public void debug_exception(Throwable e) {
+    public void processException(Throwable e) {
         String msg = e.getClass().getSimpleName()+":"+e.getMessage();
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
         Log.e("ANDROID_BOX","",e);
@@ -68,17 +69,13 @@ public abstract class ApplicationSupport <ModelType extends Model> extends Appli
 
             @Override
             public void onFails(Throwable e) {
-                if (e instanceof UserCaseSupport.FailExecutionException){
-                    observer.onFail(((UserCaseSupport.FailExecutionException) e).errorCode);
-                }else {
-                    exceptionHandler(e);
-                }
+               observer.onFail(e);
             }
         });
     }
 
-    protected void exceptionHandler(Throwable e) {
-        debug_exception(e);
+    public void processException(Activity activity, Throwable exception) {
+        processException(exception);
     }
 
     public static interface ValueAdapter<ValueType1,ValueType2>{
@@ -95,7 +92,7 @@ public abstract class ApplicationSupport <ModelType extends Model> extends Appli
 
     public static interface ValueObserver<ValueType>{
         public void onSuccess(ValueType value);
-        public void onFail(int errorCode);
+        public void onFail(Throwable exception);
     }
 
 }

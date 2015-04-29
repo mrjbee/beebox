@@ -14,7 +14,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 
-public abstract class FragmentSupport <AppType extends Application> extends Fragment {
+public abstract class FragmentSupport <AppType extends ApplicationSupport> extends Fragment {
 
     private View fragment_panel;
 

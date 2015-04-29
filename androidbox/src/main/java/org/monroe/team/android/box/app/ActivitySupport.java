@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import org.monroe.team.android.box.utils.DisplayUtils;
 
-public abstract class ActivitySupport <AppType extends Application> extends android.app.Activity{
+public abstract class ActivitySupport <AppType extends ApplicationSupport> extends android.app.Activity{
 
     private boolean noAnimation = false;
     private Lifecycle lifecycleState = Lifecycle.Created;
@@ -177,11 +177,8 @@ public abstract class ActivitySupport <AppType extends Application> extends andr
     protected void onActivitySize(int width, int height) {
     }
 
-    public void forceCloseWithErrorCode(int errorCode) {
-        Toast.makeText(getApplicationContext(),
-                "Unexpected error ("+errorCode+"). Please contact application support.",
-                Toast.LENGTH_LONG).show();
-        finish();
+    public void forceCloseWithErrorCode(Exception exception) {
+        application().processException(this, exception);
     }
 
     public enum Lifecycle {
