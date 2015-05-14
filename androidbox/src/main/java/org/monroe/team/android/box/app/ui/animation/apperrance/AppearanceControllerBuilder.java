@@ -470,8 +470,8 @@ public final class AppearanceControllerBuilder<TypeValue> {
     }
 
     private static long msLimitsCheck(long ms) {
-        if (ms > 500){
-            ms = 500;
+        if (ms > 2000){
+            ms = 2000;
         } else if(ms < 200){
             ms = 200;
         }

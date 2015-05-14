@@ -30,6 +30,11 @@ public abstract class FragmentSupport <AppType extends ApplicationSupport> exten
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
     }
