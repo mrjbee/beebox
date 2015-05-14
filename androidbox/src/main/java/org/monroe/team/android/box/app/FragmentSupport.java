@@ -90,4 +90,8 @@ public abstract class FragmentSupport <AppType extends ApplicationSupport> exten
     }
 
     protected abstract int getLayoutId();
+
+    public View getFragmentView() {
+        return fragment_panel;
+    }
 }
