@@ -73,7 +73,7 @@ public class GetViewImplementation<DataType, ViewHolderType extends GetViewImple
             return (TView) parentView.findViewById(id);
         }
 
-        public abstract void discoverUI();
+        public void discoverUI(){};
 
         @Override
         public abstract void update(TData data, int position);

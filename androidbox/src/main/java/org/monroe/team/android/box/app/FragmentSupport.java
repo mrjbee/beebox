@@ -17,6 +17,8 @@ import android.widget.TextView;
 public abstract class FragmentSupport <AppType extends ApplicationSupport> extends Fragment {
 
     private View fragment_panel;
+    private State mState = State.UNDEFINED;
+
 
     @Override
     final public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,5 +100,44 @@ public abstract class FragmentSupport <AppType extends ApplicationSupport> exten
 
     public View getFragmentView() {
         return fragment_panel;
+    }
+
+
+
+    public static enum State{
+       UNDEFINED, START, RESUME, PAUSE, STOP, ANY
+    }
+
+    public boolean state_before(State checkState) {
+        return  (checkState.ordinal() >
+                mState.ordinal());
+    }
+
+    protected State getState() {
+        return mState;
+    }
+
+    @Override
+    public void onStart() {
+        mState = State.START;
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        mState = State.RESUME;
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        mState = State.PAUSE;
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        mState = State.STOP;
+        super.onStop();
     }
 }

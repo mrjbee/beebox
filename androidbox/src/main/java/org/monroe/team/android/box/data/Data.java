@@ -215,7 +215,7 @@ public abstract class Data<DataType> {
 
         @Override
         public String message() {
-            return cause.getMessage();
+            return cause.getMessage() + ":"+ cause.getClass();
         }
     }
 
