@@ -21,7 +21,7 @@ public abstract class FragmentSupport <AppType extends ApplicationSupport> exten
 
 
     @Override
-    final public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragment_panel = inflater.inflate(getLayoutId(), container, false);
         return fragment_panel;
