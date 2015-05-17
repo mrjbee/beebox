@@ -30,6 +30,7 @@ public abstract class SlideTouchGesture implements View.OnTouchListener{
                 notifyGestureProgress(event, slideValue, fraction);
             return true;
 
+            case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 slideValue = calculateSlideValue(event);
                 fraction = Math.abs(slideValue / slideLimit);
