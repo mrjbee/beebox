@@ -61,15 +61,19 @@ public class DateUtils {
 
     public static long[] splitPeriod(Date endDate, Date startDate) {
         long rest = endDate.getTime() - startDate.getTime();
-        final long days = rest / (24*60*60*1000);
-        rest = rest % (24*60*60*1000);
-        long hours = rest / (60*60*1000);
-        rest = rest % (60*60*1000);
-        long minutes = rest / (msSeconds(60));
-        rest = rest % (msSeconds(60));
-        long seconds = rest / 1000;
-        rest = rest % (1000);
-        return new long[]{days,hours,minutes,seconds,rest};
+        return splitperiod(rest);
+    }
+
+    public static long[] splitperiod(long periodMs) {
+        final long days = periodMs / (24*60*60*1000);
+        periodMs = periodMs % (24*60*60*1000);
+        long hours = periodMs / (60*60*1000);
+        periodMs = periodMs % (60*60*1000);
+        long minutes = periodMs / (msSeconds(60));
+        periodMs = periodMs % (msSeconds(60));
+        long seconds = periodMs / 1000;
+        periodMs = periodMs % (1000);
+        return new long[]{days,hours,minutes,seconds, periodMs};
     }
 
 
