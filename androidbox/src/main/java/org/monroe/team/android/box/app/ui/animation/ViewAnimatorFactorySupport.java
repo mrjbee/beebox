@@ -22,12 +22,13 @@ public abstract class ViewAnimatorFactorySupport<ValueType> implements ViewAnima
             animator.setInterpolator(interpolator);
         }
         return animator;
+    }
 
+    @Override
+    public long duration(ValueType startValue, ValueType endValue) {
+        return durationProvider.duration(startValue, endValue);
     }
 
     protected abstract Animator createInstance(View view, ValueType startValue, ValueType endValue, ValueSetter<ValueType> setter);
 
-    public static interface DurationProvider<ValueType> {
-        public long duration(ValueType fromValue, ValueType toValue);
-    }
 }

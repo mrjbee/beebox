@@ -64,4 +64,14 @@ final public class CombinedAppearanceController implements AppearanceController{
             controller.cancel();
         }
     }
+
+    @Override
+    public long durationShow() {
+        return Lists.getLast(controllers).durationShow();
+    }
+
+    @Override
+    public long durationHide() {
+        return Lists.getLast(controllers).durationShow();
+    }
 }

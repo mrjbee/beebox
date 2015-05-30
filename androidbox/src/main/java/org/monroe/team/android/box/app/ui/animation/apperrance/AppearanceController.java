@@ -13,6 +13,8 @@ public interface AppearanceController {
     public void hideWithoutAnimation();
     public void cancel();
 
+    public long durationShow();
+    public long durationHide();
 
     public static interface AnimatorCustomization {
         public void customize(Animator animator);

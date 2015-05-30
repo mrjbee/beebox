@@ -48,7 +48,7 @@ public class DefaultAppearanceController implements AppearanceController {
         if (Boolean.TRUE.equals(stateShowing))return;
         cancelCurrentAnimator();
         stateShowing = Boolean.TRUE;
-        if (valueGetter.getCurrentValue(animatedView) == valueGetter.getShowValue()){
+        if (isAlreadyShow()){
             showWithoutAnimation();
             return;
         }
@@ -74,6 +74,10 @@ public class DefaultAppearanceController implements AppearanceController {
         currentAnimator.start();
     }
 
+    public boolean isAlreadyShow() {
+        return valueGetter.getCurrentValue(animatedView) == valueGetter.getShowValue();
+    }
+
     @Override
     public void hideAndCustomize(AnimatorCustomization customization) {
         if (Boolean.FALSE.equals(stateShowing))return;
@@ -81,7 +85,7 @@ public class DefaultAppearanceController implements AppearanceController {
         stateShowing = Boolean.FALSE;
 
         cancelCurrentAnimator();
-        if (valueGetter.getCurrentValue(animatedView) == valueGetter.getHideValue()){
+        if (isAlreadyHide()){
             hideWithoutAnimation();
             return;
         }
@@ -100,6 +104,10 @@ public class DefaultAppearanceController implements AppearanceController {
             customization.customize(currentAnimator);
         }
         currentAnimator.start();
+    }
+
+    public boolean isAlreadyHide() {
+        return valueGetter.getCurrentValue(animatedView) == valueGetter.getHideValue();
     }
 
     @Override
@@ -121,6 +129,18 @@ public class DefaultAppearanceController implements AppearanceController {
     @Override
     public void cancel() {
         cancelCurrentAnimator();
+    }
+
+    @Override
+    public long durationShow() {
+        if (isAlreadyShow()) return 0;
+        return showAnimatorFactory.duration(valueGetter.getCurrentValue(animatedView), valueGetter.getShowValue());
+    }
+
+    @Override
+    public long durationHide() {
+        if (isAlreadyHide()) return 0;
+        return hideViewAnimatorFactory.duration(valueGetter.getCurrentValue(animatedView), valueGetter.getHideValue());
     }
 
     private void cancelCurrentAnimator() {
