@@ -50,6 +50,11 @@ public final class AppearanceControllerBuilder<TypeValue> {
         return this;
     }
 
+    public AppearanceControllerBuilder<TypeValue> hideAndVisible(){
+        visibilityOnHide = View.VISIBLE;
+        return this;
+    }
+
     public AppearanceControllerBuilder<TypeValue> showAnimation(ViewAnimatorFactorySupport.DurationProvider<? super TypeValue> duration){
         showAnimationFactory = createAnimator( duration, TimeInterpreterBuilder.NO_OP);
         return this;
@@ -497,6 +502,8 @@ public final class AppearanceControllerBuilder<TypeValue> {
                 hideAnimationFactory,
                 visibilityOnHide);
     }
+
+
 
 
     public static interface TimeInterpreterBuilder{
