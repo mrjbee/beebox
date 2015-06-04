@@ -119,7 +119,7 @@ public final class SceneDirector {
                     action.executeAnd(null);
                 }
             } else {
-                long maxDuration = 0;
+                long maxDuration = -1;
                 Action maxDurationAction = null;
                 for (Action action : actions) {
                     long duration = action.duration();
