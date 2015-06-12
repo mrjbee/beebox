@@ -5,6 +5,7 @@ import org.monroe.team.android.box.json.Json;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -72,6 +73,8 @@ public class HttpManager {
             InputStream inputStream = null;
             try {
                 inputStream = connection.getInputStream();
+            } catch (FileNotFoundException e){
+                inputStream = null;
             } catch (Exception e) {
                 closeStream(outputStream);
                 closeStream(inputStream);
@@ -174,6 +177,7 @@ public class HttpManager {
         return new ResponseWithHeadersBuilder<Json>() {
             @Override
             protected Json readBody(InputStream input) throws IOException, InvalidBodyFormatException {
+                if (input == null)return null;
                 BufferedReader br = null;
                 br = new BufferedReader(new InputStreamReader(input));
                 StringBuilder sb = new StringBuilder();
