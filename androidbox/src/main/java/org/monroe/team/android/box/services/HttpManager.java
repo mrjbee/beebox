@@ -65,6 +65,7 @@ public class HttpManager {
         HttpURLConnection connection = prepareConnection(details, requestUrl);
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
+        requestBuilder.setRequestProperties(connection);
         try {
             final OutputStream outputStream = openOutputStream(connection);
             buildRequest(requestBuilder, connection, outputStream);
@@ -164,7 +165,9 @@ public class HttpManager {
 
     public static RequestWithHeadersBuilder request_json(Json json){
         String jsonString = json.toJsonString();
-        return new StringRequestBuilder(jsonString);
+        StringRequestBuilder builder =new StringRequestBuilder(jsonString);
+        builder.header("content-type","application/json");
+        return builder;
     }
 
     public static ResponseWithHeadersBuilder<Json> response_json() {
@@ -228,6 +231,7 @@ public class HttpManager {
     }
 
     public static interface RequestBuilder {
+        public void setRequestProperties(HttpURLConnection connection);
         public void buildRequest(OutputStream stream, HttpURLConnection connection) throws IOException;
     }
 
@@ -240,11 +244,16 @@ public class HttpManager {
             return this;
         }
 
+
         @Override
-        public void buildRequest(OutputStream stream, HttpURLConnection connection) throws IOException {
+        public void setRequestProperties(HttpURLConnection connection) {
             for (Map.Entry<String, String> headerEntry : headers.entrySet()) {
                 connection.setRequestProperty(headerEntry.getKey(), headerEntry.getValue());
             }
+        }
+
+        @Override
+        public void buildRequest(OutputStream stream, HttpURLConnection connection) throws IOException {
             dealsWithRequest(stream);
         }
 

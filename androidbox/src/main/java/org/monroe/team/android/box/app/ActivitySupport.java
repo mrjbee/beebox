@@ -177,7 +177,7 @@ public abstract class ActivitySupport <AppType extends ApplicationSupport> exten
     protected void onActivitySize(int width, int height) {
     }
 
-    public void forceCloseWithErrorCode(Exception exception) {
+    public void forceCloseWithErrorCode(Throwable exception) {
         application().processException(this, exception);
     }
 
@@ -186,4 +186,21 @@ public abstract class ActivitySupport <AppType extends ApplicationSupport> exten
     }
 
 
+    public <ValueType> ApplicationSupport.ValueObserver<ValueType> observe(final OnValue<ValueType> onValue){
+      return new ApplicationSupport.ValueObserver<ValueType>() {
+          @Override
+          public void onSuccess(ValueType value) {
+                onValue.action(value);
+          }
+
+          @Override
+          public void onFail(Throwable exception) {
+            forceCloseWithErrorCode(exception);
+          }
+      };
+    }
+
+    public static interface OnValue<ValueType>{
+        public void action(ValueType valueType);
+    }
 }
