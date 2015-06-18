@@ -1,6 +1,7 @@
 package org.monroe.team.android.box.data;
 
 import org.monroe.team.corebox.app.Model;
+import org.monroe.team.corebox.utils.DateUtils;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -11,15 +12,23 @@ public class RefreshableCachedData<DataType> {
     private Timer refreshTimer;
     private DataObserver<DataType> observer;
     private final long refreshDelay;
+    private final String timerId;
+
+    public RefreshableCachedData(CachedData<DataType> cachedData, Class<DataType> typeClass, long refreshDelay) {
+        this.cachedData = cachedData;
+        this.refreshDelay = refreshDelay;
+        timerId = typeClass.getName();
+    }
 
     public RefreshableCachedData(CachedData<DataType> cachedData, long refreshDelay) {
         this.cachedData = cachedData;
         this.refreshDelay = refreshDelay;
+        timerId = DateUtils.msAsString();
     }
 
     public synchronized void activateRefreshing(){
         if (refreshTimer != null) return;
-        refreshTimer = new Timer("cachedDataTimer_"+cachedData.dataClass.getName(), true);
+        refreshTimer = new Timer("cachedDataTimer_"+timerId, true);
         fetchAndSchedule(true);
     }
 

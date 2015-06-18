@@ -19,7 +19,6 @@ public abstract class Data<DataType> {
     }
 
     protected final org.monroe.team.corebox.app.Model model;
-    protected final Class<DataType> dataClass;
     private long lastFetchTaskRunId = 0;
 
     private BackgroundTaskManager.BackgroundTask<DataType> fetchDataTask;
@@ -28,9 +27,13 @@ public abstract class Data<DataType> {
     private List<FetchObserver<DataType>> awaitingObservers = new ArrayList<>();
     private List<DataChangeObserver<DataType>> dataChangeObserverList = new ArrayList<>();
 
+    public Data(org.monroe.team.corebox.app.Model model) {
+        this.model = model;
+    }
+
+    @Deprecated
     public Data(Class<DataType> dataClass, org.monroe.team.corebox.app.Model model) {
         this.model = model;
-        this.dataClass = dataClass;
     }
 
     @Deprecated
@@ -156,7 +159,6 @@ public abstract class Data<DataType> {
         if (runId != lastFetchTaskRunId) return;
         dataState = STATE.INVALID;
         fetchDataTask = null;
-        L.w("DataProvider","Error on fetch = "+dataClass.getName(), e);
         final List<FetchObserver<DataType>> observersCopy = copyAndClear();
         model.getResponseHandler().post(new Runnable() {
             @Override

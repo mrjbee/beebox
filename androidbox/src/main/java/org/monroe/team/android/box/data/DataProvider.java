@@ -30,14 +30,14 @@ public abstract class DataProvider<DataType extends Serializable>  extends Data<
         this(dataClass,model,context,null);
     }
 
-    public DataProvider(Class<DataType> dataClass, Model model, Context context, Event<DataType> dataChangeEvent) {
-        super(dataClass, model);
+    public DataProvider(final Class<DataType> dataClass, Model model, Context context, Event<DataType> dataChangeEvent) {
+        super(model);
         this.context = context;
         this.dataChangeEvent = dataChangeEvent;
         setDataChangeObserver(new DataChangeObserver<DataType>() {
             @Override
             public void onDataInvalid() {
-                INVALID_DATA.send(DataProvider.this.context, DataProvider.super.dataClass);
+                INVALID_DATA.send(DataProvider.this.context, dataClass);
             }
 
             @Override
