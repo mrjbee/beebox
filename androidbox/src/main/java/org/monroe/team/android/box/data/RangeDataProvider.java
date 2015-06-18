@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class RangeDataProvider<TypeKey, TypeData> {
 
@@ -48,4 +49,12 @@ public abstract class RangeDataProvider<TypeKey, TypeData> {
 
     protected abstract Data<TypeData> buildData(TypeKey key);
     protected abstract String convertToStringKey(TypeKey key);
+
+    public synchronized void invalidateAll() {
+        for (Map.Entry<String, WeakReference<Data<TypeData>>> stringWeakReferenceEntry : keyTypeDataHashMap.entrySet()) {
+            if (stringWeakReferenceEntry.getValue() != null && stringWeakReferenceEntry.getValue().get() != null){
+                stringWeakReferenceEntry.getValue().get().invalidate();
+            }
+        }
+    }
 }
