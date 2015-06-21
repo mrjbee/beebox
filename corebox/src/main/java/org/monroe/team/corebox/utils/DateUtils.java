@@ -34,6 +34,10 @@ public class DateUtils {
     }
 
 
+    public static long timeOnly(Date date) {
+        return date.getTime() - dateOnly(date).getTime();
+    }
+
     public static Date mathDays(Date date, int daysCount) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
