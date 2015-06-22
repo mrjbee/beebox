@@ -13,6 +13,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.monroe.team.android.box.data.Data;
 import org.monroe.team.android.box.utils.DisplayUtils;
 
 public abstract class ActivitySupport <AppType extends ApplicationSupport> extends android.app.Activity{
@@ -199,6 +200,25 @@ public abstract class ActivitySupport <AppType extends ApplicationSupport> exten
           }
       };
     }
+
+    public <ValueType> Data.FetchObserver<ValueType> observe_data(final OnValue<ValueType> onValue){
+        return new Data.FetchObserver<ValueType>() {
+            @Override
+            public void onFetch(ValueType valueType) {
+                onValue.action(valueType);
+            }
+
+            @Override
+            public void onError(Data.FetchError fetchError) {
+                if (fetchError instanceof Data.ExceptionFetchError){
+                   forceCloseWithErrorCode(((Data.ExceptionFetchError) fetchError).cause);
+                }else{
+                    forceCloseWithErrorCode(new IllegalStateException(fetchError.message()));
+                }
+            }
+        };
+    }
+
 
     public static interface OnValue<ValueType>{
         public void action(ValueType valueType);
