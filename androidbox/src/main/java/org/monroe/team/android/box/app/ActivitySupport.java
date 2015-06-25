@@ -210,13 +210,17 @@ public abstract class ActivitySupport <AppType extends ApplicationSupport> exten
 
             @Override
             public void onError(Data.FetchError fetchError) {
-                if (fetchError instanceof Data.ExceptionFetchError){
-                   forceCloseWithErrorCode(((Data.ExceptionFetchError) fetchError).cause);
-                }else{
-                    forceCloseWithErrorCode(new IllegalStateException(fetchError.message()));
-                }
+                handle_fetchError(fetchError);
             }
         };
+    }
+
+    public void handle_fetchError(Data.FetchError fetchError) {
+        if (fetchError instanceof Data.ExceptionFetchError){
+           forceCloseWithErrorCode(((Data.ExceptionFetchError) fetchError).cause);
+        }else{
+            forceCloseWithErrorCode(new IllegalStateException(fetchError.message()));
+        }
     }
 
 
