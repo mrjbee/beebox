@@ -182,6 +182,8 @@ public abstract class ActivitySupport <AppType extends ApplicationSupport> exten
         application().processException(this, exception);
     }
 
+
+
     public enum Lifecycle {
         Created, Started, Resumed, Paused, Stopped, Destroyed
     }
@@ -213,6 +215,10 @@ public abstract class ActivitySupport <AppType extends ApplicationSupport> exten
                 handle_fetchError(fetchError);
             }
         };
+    }
+
+    public void handle_Error(Throwable e) {
+        forceCloseWithErrorCode(e);
     }
 
     public void handle_fetchError(Data.FetchError fetchError) {
