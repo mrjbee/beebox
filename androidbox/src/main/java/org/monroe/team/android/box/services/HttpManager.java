@@ -120,7 +120,7 @@ public class HttpManager {
     }
 
     private void closeStream(Closeable stream) {
-        try{if (stream!=null) stream.close();}catch (Exception howCare){}
+        try{if (stream!=null) stream.close();}catch (Exception whoCare){}
     }
 
     private OutputStream openOutputStream(HttpURLConnection connection) throws IOException {
@@ -195,6 +195,20 @@ public class HttpManager {
             @Override
             protected boolean readBodyCompletely() {
                 return true;
+            }
+        };
+    }
+
+    public static ResponseWithHeadersBuilder<InputStream> response_input() {
+        return new ResponseWithHeadersBuilder<InputStream>() {
+            @Override
+            protected InputStream readBody(InputStream input) throws IOException, InvalidBodyFormatException {
+                return input;
+            }
+
+            @Override
+            protected boolean readBodyCompletely() {
+                return false;
             }
         };
     }
