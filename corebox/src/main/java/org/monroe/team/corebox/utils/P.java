@@ -1,6 +1,8 @@
 package org.monroe.team.corebox.utils;
 
-public class P<TypeFirst, TypeSecond> {
+import java.io.Serializable;
+
+public class P<TypeFirst, TypeSecond> implements Serializable {
 
     public final TypeFirst first;
     public final TypeSecond second;
