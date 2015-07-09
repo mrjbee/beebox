@@ -57,6 +57,43 @@ public final class SceneDirector {
         return this;
     }
 
+    public SceneDirector action_wait(final long ms){
+        installAction(new Action() {
+            @Override
+            public void executeAnd(Runnable postAction) {
+
+            }
+
+            @Override
+            public long duration() {
+                return ms;
+            }
+        });
+        return this;
+    }
+
+
+    public SceneDirector action_hide_without_animation(final AppearanceController... ac){
+        return action(new Runnable() {
+            @Override
+            public void run() {
+                for (AppearanceController controller : ac) {
+                    controller.hideWithoutAnimation();
+                }
+            }
+        });
+    }
+
+    public SceneDirector action_show_without_animation(final AppearanceController... ac){
+        return action(new Runnable() {
+            @Override
+            public void run() {
+                for (AppearanceController controller : ac) {
+                    controller.showWithoutAnimation();
+                }
+            }
+        });
+    }
 
     public SceneDirector action(final Runnable action) {
         installAction(new Action() {

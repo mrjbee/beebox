@@ -51,10 +51,10 @@ public class ETD {
         String resultString = buildResultString(results);
         if (condition.log(delta,results)) {
             String time = timeToString(delta);
-            L.i("ETD", "Name = " + name + " time=" + time+ " result=" + resultString);
+            L.d("ETD", "Name = " + name + " time=" + time+ " result=" + resultString);
             long startMs = watch.startMs;
             for (Stage stage: watch.stageList){
-               L.i("ETD", "  -- stage = "+stage.name+" time="+ timeToString(stage.time - startMs)+ " result=" + buildResultString(stage.results));
+               L.d("ETD", "  -- stage = "+stage.name+" time="+ timeToString(stage.time - startMs)+ " result=" + buildResultString(stage.results));
                startMs = stage.time;
             }
         }
@@ -183,7 +183,7 @@ public class ETD {
         private synchronized void doStop() {
             checkWarnMeasure();
             long delta = System.currentTimeMillis() - startMs;
-            L.i("ETD", "Name = " + name + " execution time = "+timeToString(delta));
+            L.d("ETD", "Name = " + name + " execution time = "+timeToString(delta));
         }
 
         public synchronized void stop(){
