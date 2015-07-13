@@ -9,7 +9,9 @@ import org.monroe.team.android.box.services.SettingManager;
 import org.monroe.team.corebox.app.Model;
 import org.monroe.team.corebox.services.BackgroundTaskManager;
 import org.monroe.team.corebox.uc.UserCase;
-import org.monroe.team.corebox.uc.UserCaseSupport;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public abstract class ApplicationSupport <ModelType extends Model> extends Application{
 
@@ -58,6 +60,15 @@ public abstract class ApplicationSupport <ModelType extends Model> extends Appli
         model().usingService(SettingManager.class).set(settingItem, settingValue);
     }
 
+    public PeriodicalAction preparePeriodicalAction(Runnable runnable){
+        return new PeriodicalAction(this, runnable) {
+            @Override
+            protected void error(Exception e) {
+                processException(e);
+            }
+        };
+    }
+
     public <RequestType,ResponseType, ValueType> BackgroundTaskManager.BackgroundTask<ResponseType> fetchValue(
             Class<? extends UserCase<RequestType,ResponseType>> ucId,
             final RequestType request, final ValueAdapter<ResponseType, ValueType> adapter, final ValueObserver<ValueType> observer) {
@@ -94,5 +105,58 @@ public abstract class ApplicationSupport <ModelType extends Model> extends Appli
         public void onSuccess(ValueType value);
         public void onFail(Throwable exception);
     }
+
+    public static abstract class PeriodicalAction {
+
+        private final ApplicationSupport mApp;
+        private final Runnable mAction;
+        private Timer mTimer = null;
+
+        public PeriodicalAction(ApplicationSupport app, Runnable action) {
+            this.mApp = app;
+            this.mAction = action;
+        }
+
+        public synchronized void start(long startupDelay, long period){
+            if (mTimer != null) throw new IllegalStateException("Timer already running");
+            stop();
+            mTimer = new Timer(true);
+            mTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    time();
+                }
+            }, startupDelay, period);
+        }
+
+        private synchronized void time() {
+            if (mTimer == null) return;
+            mApp.doOnResponseThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        mAction.run();
+                    } catch (Exception e) {
+                        error(e);
+                    }
+                }
+            });
+
+        }
+
+        protected abstract void error(Exception e);
+
+        public synchronized void stop(){
+            if (mTimer == null) return;
+            mTimer.cancel();
+            mTimer.purge();
+            mTimer = null;
+        }
+    }
+
+    private void doOnResponseThread(Runnable runnable) {
+        model().getResponseHandler().post(runnable);
+    }
+
 
 }

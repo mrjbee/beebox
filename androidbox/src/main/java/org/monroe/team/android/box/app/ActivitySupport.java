@@ -182,8 +182,6 @@ public abstract class ActivitySupport <AppType extends ApplicationSupport> exten
         application().processException(this, exception);
     }
 
-
-
     public enum Lifecycle {
         Created, Started, Resumed, Paused, Stopped, Destroyed
     }
