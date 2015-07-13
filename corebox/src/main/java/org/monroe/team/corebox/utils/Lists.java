@@ -25,7 +25,7 @@ public class Lists {
     public static <DataType> void iterateAndRemove(Collection<DataType> list, Closure<Iterator<DataType>, Boolean> closure) {
         Iterator<DataType> iterator = list.iterator();
         while (iterator.hasNext()){
-            if(closure.execute(iterator)){
+            if(Boolean.TRUE.equals(closure.execute(iterator))){
                 return;
             }
         }
