@@ -21,4 +21,11 @@ public class Views {
     public static <ViewType> ViewType viewAs(View view, Class<ViewType> type){
         return (ViewType) view;
     }
+
+    public static int color(View view, int colorRes, int fallbackColor) {
+        if (view.isInEditMode()){
+            return fallbackColor;
+        }
+        return view.getResources().getColor(colorRes);
+    }
 }
