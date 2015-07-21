@@ -19,10 +19,19 @@ public final class TextDataBase {
     private String mAppId;
     private int mVersion;
 
-    public TextDataBase(Context context, String appId, int version, TextDataProvider... textDataProviders) {
+    public TextDataBase(Context context, String appId, TextDataProvider... textDataProviders) {
         mContext = context;
+
+        for (int i=0; i< textDataProviders.length; i++) {
+            try {
+                TextDataTable textDataTable = (TextDataTable) textDataProviders[i].mDataTable.newInstance();
+                mVersion = Math.max(mVersion, textDataTable.getDataVersion());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         mAppId = appId;
-        mVersion = version;
         mTableClassList = new Class[textDataProviders.length];
         for (int i=0; i< textDataProviders.length; i++){
             mTableClassList[i] = textDataProviders[i].mDataTable;
@@ -154,7 +163,7 @@ public final class TextDataBase {
 
     private static class TextDataBaseSchema extends Schema{
         public TextDataBaseSchema(int version, String appId, Class<? extends Table>... tables) {
-            super(version, appId+"_app", tables);
+            super(version, appId+"_text_db", tables);
         }
     }
 
@@ -166,12 +175,13 @@ public final class TextDataBase {
 
         public TextDataTable() {
             TABLE_NAME = getDataName()+"_text_data";
-            define(1, TABLE_NAME)
+            define(getDataVersion(), TABLE_NAME)
                     .column(_ID, "TEXT NOT NULL PRIMARY KEY")
                     .column(_DATA, "TEXT");
         }
 
         public abstract String getDataName();
+        public abstract int getDataVersion();
     }
 
     public interface TextDataAdapter<DataType> {

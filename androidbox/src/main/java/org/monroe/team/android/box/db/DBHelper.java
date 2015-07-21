@@ -25,19 +25,24 @@ public class DBHelper extends SQLiteOpenHelper {
         });
     }
 
-    public void onUpgrade(final SQLiteDatabase db, int oldVersion, int newVersion) {
-        for (int version = oldVersion+1; version <= newVersion; version++ ) {
+    public void onUpgrade(final SQLiteDatabase db, int oldVersion, final int newVersion) {
+        for (int version = oldVersion + 1; version <= newVersion; version++ ) {
             final int finalVersion = version;
             schema.withEachTable(new Closure<Schema.Table, Void>() {
                 @Override
                 public Void execute(Schema.Table table) {
-                    table.alterColumns(finalVersion, new Closure<String,Void>() {
-                        @Override
-                        public Void execute(String sql) {
-                            db.execSQL(sql);
-                            return null;
-                        }
-                    });
+                    if (table.getMinVersion() == newVersion){
+                        //if completely new table
+                        db.execSQL(table.createScript());
+                    } else {
+                        table.alterColumns(finalVersion, new Closure<String, Void>() {
+                            @Override
+                            public Void execute(String sql) {
+                                db.execSQL(sql);
+                                return null;
+                            }
+                        });
+                    }
                     return null;
                 }
             });

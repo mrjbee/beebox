@@ -51,6 +51,7 @@ public abstract class Schema {
     public static interface Table {
         public String createScript();
         void alterColumns(int version, Closure<String, Void> sqlAction);
+        int getMinVersion();
     }
 
     public static abstract class VersionTable implements Table {
@@ -65,6 +66,15 @@ public abstract class Schema {
 
         final public TableBuilder define(int version){
             return new TableBuilder(version,tableColumns);
+        }
+
+        @Override
+        final public int getMinVersion() {
+            int answer = Integer.MAX_VALUE;
+            for (VersionTableColumn tableColumn : tableColumns) {
+                answer = Math.min(tableColumn.version, answer);
+            }
+            return answer;
         }
 
         @Override
