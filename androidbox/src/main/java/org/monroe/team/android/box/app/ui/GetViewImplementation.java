@@ -45,6 +45,7 @@ public class GetViewImplementation<DataType, ViewHolderType extends GetViewImple
         TViewHolder create(View convertView);
     }
 
+    @Deprecated
     public static abstract class GenericViewHolderFactory<TData> implements ViewHolderFactory<GenericViewHolder<TData>>{
         @Override
         final public GenericViewHolder<TData> create(View convertView) {
@@ -63,12 +64,13 @@ public class GetViewImplementation<DataType, ViewHolderType extends GetViewImple
 
         protected View parentView;
 
-        private void initialize(View view){
+        @Deprecated
+        public void initialize(View view){
             parentView = view;
             discoverUI();
         }
 
-
+        @Deprecated
         final public <TView> TView _view(int id, Class<TView> viewType){
             return (TView) parentView.findViewById(id);
         }
