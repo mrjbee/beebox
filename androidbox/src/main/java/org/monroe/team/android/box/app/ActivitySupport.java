@@ -38,12 +38,14 @@ public abstract class ActivitySupport <AppType extends ApplicationSupport> exten
 
     @Override
     protected void onStart() {
+        if (noAnimation) overridePendingTransition(0, 0);
         super.onStart();
         updateState(Lifecycle.Started);
     }
 
     @Override
     protected void onResume() {
+        if (noAnimation) overridePendingTransition(0, 0);
         super.onResume();
         updateState(Lifecycle.Resumed);
     }
