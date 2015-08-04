@@ -1,5 +1,7 @@
 package org.monroe.team.android.box.services;
 
+import android.util.Base64;
+
 import org.json.JSONException;
 import org.monroe.team.android.box.json.Json;
 
@@ -29,6 +31,8 @@ public class HttpManager {
             InputStream inputStream = null;
             try {
                 inputStream = connection.getInputStream();
+            } catch (FileNotFoundException e){
+                inputStream = null;
             } catch (Exception e) {
                 closeStream(inputStream);
                 throw e;
@@ -199,6 +203,28 @@ public class HttpManager {
         };
     }
 
+    public static ResponseWithHeadersBuilder<String> response_text() {
+        return new ResponseWithHeadersBuilder<String>() {
+            @Override
+            protected String readBody(InputStream input) throws IOException, InvalidBodyFormatException {
+                if (input == null) return null;
+                BufferedReader br = null;
+                br = new BufferedReader(new InputStreamReader(input));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line+"\n");
+                }
+                return sb.toString();
+            }
+
+            @Override
+            protected boolean readBodyCompletely() {
+                return true;
+            }
+        };
+    }
+
     public static ResponseWithHeadersBuilder<InputStream> response_input() {
         return new ResponseWithHeadersBuilder<InputStream>() {
             @Override
@@ -332,10 +358,14 @@ public class HttpManager {
         private int timeout = 5000;
         private int readTimeout = 50000;
         private boolean disconnect = false;
+        private String mAuthorization;
 
         private void apply(HttpURLConnection connection) {
             connection.setConnectTimeout(timeout);
             connection.setReadTimeout(readTimeout);
+            if (mAuthorization != null){
+                connection.setRequestProperty("Authorization", mAuthorization);
+            }
         }
 
         public ConnectionDetails disconnect(boolean disconnect) {
@@ -353,9 +383,16 @@ public class HttpManager {
             return this;
         }
 
+        public ConnectionDetails basicAuth(String user, String password){
+            mAuthorization = "Basic " + Base64.encodeToString((user+":"+password).getBytes(),Base64.NO_WRAP);
+            return this;
+        }
+
         boolean disconnect() {
             return disconnect;
         }
+
+
     }
 
     public static class BadUrlException extends RuntimeException {
