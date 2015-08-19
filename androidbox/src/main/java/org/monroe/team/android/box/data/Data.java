@@ -192,9 +192,11 @@ public abstract class Data<DataType> {
 
     public static interface FetchError {
         public String message();
+        Throwable originalException();
     }
 
     public static class DefaultFetchError implements FetchError {
+
         public final String msg;
 
         public DefaultFetchError(String msg) {
@@ -203,6 +205,11 @@ public abstract class Data<DataType> {
 
         public String message(){
             return msg;
+        }
+
+        @Override
+        public Throwable originalException() {
+            return new IllegalStateException(message());
         }
     }
 
@@ -218,6 +225,11 @@ public abstract class Data<DataType> {
         @Override
         public String message() {
             return cause.getMessage() + ":"+ cause.getClass();
+        }
+
+        @Override
+        public Throwable originalException() {
+            return cause;
         }
     }
 
