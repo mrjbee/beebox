@@ -14,6 +14,7 @@ import java.util.concurrent.Callable;
 
 public abstract class Data<DataType> {
 
+
     private enum STATE{
         VALID, INVALID, FETCHING
     }
@@ -47,6 +48,22 @@ public abstract class Data<DataType> {
 
     public void addDataChangeObserver(DataChangeObserver<DataType> observer) {
         dataChangeObserverList.add(observer);
+    }
+
+    public void dependsOn(Data ... dependsFromDataSet) {
+        for (Data data : dependsFromDataSet) {
+            data.addDataChangeObserver(new DataChangeObserver<Object>() {
+                @Override
+                public void onDataInvalid() {
+                    invalidate();
+                }
+
+                @Override
+                public void onData(Object o) {
+
+                }
+            });
+        }
     }
 
     @Deprecated
